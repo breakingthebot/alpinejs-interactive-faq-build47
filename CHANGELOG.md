@@ -5,6 +5,14 @@ All notable changes to **Build 47 (NexusCloud Alpine.js Interactive Knowledge Ba
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-07-27
+
+### Added
+- Integrated **FAQ Article Shareable Direct Link Generator** in `faqService.js` and `public/index.html`.
+- Added share link generator domain helper (`getShareableLink`), **🔗 Share** action buttons on FAQ card headers, and clipboard copying handler (`copyShareLink`).
+- Added URL hash deep link auto-expansion listener (`#faq-faq_2`), automatic smooth scrolling, and pulse glow animation (`.deep-link-highlight`).
+- Added unit tests in `faqService.spec.js` (23 total unit tests passing).
+
 ## [0.9.0] - 2026-07-27
 
 ### Added

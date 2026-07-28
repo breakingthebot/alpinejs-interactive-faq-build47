@@ -169,6 +169,14 @@ export function getCategories() {
   ];
 }
 
+export function getShareableLink(faqId, origin = 'https://alpinejs-interactive-faq-build47.vercel.app') {
+  const faq = getFaqById(faqId);
+  if (!faq) {
+    throw new Error(`FAQ item with ID ${faqId} not found`);
+  }
+  return `${origin}#faq-${faq.id}`;
+}
+
 export function createFilterPreset(name, category = 'All', query = '') {
   if (!name || !name.trim()) {
     throw new Error('Preset name is required');

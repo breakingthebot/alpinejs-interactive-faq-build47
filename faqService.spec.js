@@ -9,6 +9,7 @@ import {
   getCodeSnippet,
   getSearchSuggestions,
   getFeedbackAnalytics,
+  getShareableLink,
   createFilterPreset,
   validateTheme,
   exportFaqsAsMarkdown,
@@ -31,6 +32,15 @@ describe('faqService', () => {
     expect(faqs.length).toBe(6);
     expect(faqs[0].popularityScore).toBeGreaterThanOrEqual(faqs[1].popularityScore);
     expect(faqs[0].question).toContain('rate limiting');
+  });
+
+  it('generates shareable deep-link URLs accurately', () => {
+    const link = getShareableLink('faq_1', 'https://nexus.ai');
+    expect(link).toBe('https://nexus.ai#faq-faq_1');
+  });
+
+  it('throws error when generating shareable link for invalid FAQ ID', () => {
+    expect(() => getShareableLink('invalid_id')).toThrow('FAQ item with ID invalid_id not found');
   });
 
   it('creates custom search filter presets accurately', () => {

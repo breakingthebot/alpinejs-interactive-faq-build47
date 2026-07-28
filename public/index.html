@@ -226,7 +226,11 @@
 
         <!-- Alpine Accordion Repeat Items -->
         <template x-for="faq in faqs" :key="faq.id">
-          <div class="faq-card card-glass" :class="{ 'expanded': openFaqId === faq.id }">
+          <div 
+            :id="'faq-' + faq.id" 
+            class="faq-card card-glass" 
+            :class="{ 'expanded': openFaqId === faq.id, 'deep-link-highlight': highlightedFaqId === faq.id }"
+          >
             <!-- Accordion Header Button -->
             <div class="faq-header-wrapper">
               <button 
@@ -248,16 +252,28 @@
                 </div>
               </button>
 
-              <!-- Bookmark Toggle Action Button -->
-              <button 
-                type="button" 
-                class="btn-bookmark" 
-                :class="{ 'bookmarked': bookmarkedIds.includes(faq.id) }"
-                @click.stop="toggleBookmark(faq.id)"
-                :title="bookmarkedIds.includes(faq.id) ? 'Remove Bookmark' : 'Save Article to Bookmarks'"
-              >
-                <span x-text="bookmarkedIds.includes(faq.id) ? '📌 Saved' : '📌 Bookmark'"></span>
-              </button>
+              <div class="faq-card-actions">
+                <!-- Share Direct Link Button -->
+                <button 
+                  type="button" 
+                  class="btn-share-link" 
+                  @click.stop="copyShareLink(faq)"
+                  title="Copy Direct Share Link URL for this FAQ Article"
+                >
+                  🔗 Share
+                </button>
+
+                <!-- Bookmark Toggle Action Button -->
+                <button 
+                  type="button" 
+                  class="btn-bookmark" 
+                  :class="{ 'bookmarked': bookmarkedIds.includes(faq.id) }"
+                  @click.stop="toggleBookmark(faq.id)"
+                  :title="bookmarkedIds.includes(faq.id) ? 'Remove Bookmark' : 'Save Article to Bookmarks'"
+                >
+                  <span x-text="bookmarkedIds.includes(faq.id) ? '📌 Saved' : '📌 Bookmark'"></span>
+                </button>
+              </div>
             </div>
 
             <!-- Accordion Content Body with Alpine x-collapse -->
@@ -551,6 +567,7 @@
         categoryStats: {},
         faqs: [],
         openFaqId: 'faq_1', // Open first accordion by default
+        highlightedFaqId: null,
         bookmarkedIds: JSON.parse(localStorage.getItem('nexus_faq_bookmarks') || '[]'),
         userVotes: {}, // Track voted items { faq_1: 'up' }
         suggestions: [],
@@ -587,6 +604,28 @@
               this.suggestions = [];
               this.showSuggestions = false;
             }
+          });
+
+          // Deep Link URL Hash Auto-Expansion
+          setTimeout(() => {
+            if (window.location.hash && window.location.hash.startsWith('#faq-')) {
+              const targetId = window.location.hash.replace('#faq-', '');
+              this.openFaqId = targetId;
+              this.highlightedFaqId = targetId;
+              const el = document.getElementById('faq-' + targetId);
+              if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }
+          }, 300);
+        },
+
+        copyShareLink(faq) {
+          const link = `${window.location.origin}${window.location.pathname}#faq-${faq.id}`;
+          navigator.clipboard.writeText(link).then(() => {
+            this.showToast(`🔗 Copied direct link for "${faq.question.substring(0, 30)}..."`, 'success');
+          }).catch(() => {
+            this.showToast(`🔗 Share link: ${link}`, 'info');
           });
         },
 

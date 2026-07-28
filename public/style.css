@@ -752,6 +752,42 @@ body {
   flex: 1;
 }
 
+.faq-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-share-link {
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-share-link:hover {
+  background: rgba(139, 92, 246, 0.3);
+  color: #ffffff;
+  transform: scale(1.03);
+}
+
+.faq-card.deep-link-highlight {
+  border-color: var(--accent-purple) !important;
+  box-shadow: 0 0 25px var(--accent-glow) !important;
+  animation: pulseHighlight 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulseHighlight {
+  0% { box-shadow: 0 0 15px var(--accent-glow); }
+  100% { box-shadow: 0 0 35px rgba(139, 92, 246, 0.6); }
+}
+
 .btn-bookmark {
   background: rgba(255, 255, 255, 0.04);
   color: var(--text-muted);

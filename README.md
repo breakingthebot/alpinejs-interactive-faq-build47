@@ -2,24 +2,26 @@
 
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Demo-000000?style=for-the-badge&logo=vercel)](https://alpinejs-interactive-faq-build47.vercel.app)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/breakingthebot/alpinejs-interactive-faq-build47)
-[![Tests](https://img.shields.io/badge/Vitest-21%20Passed-6E9F18?style=for-the-badge&logo=vitest)](file:///C:/Users/marve/Desktop/AI-286-Builds/Build_47/faqService.spec.js)
-[![Version](https://img.shields.io/badge/Release-v0.9.0-blue?style=for-the-badge)](file:///C:/Users/marve/Desktop/AI-286-Builds/Build_47/CHANGELOG.md)
+[![Tests](https://img.shields.io/badge/Vitest-23%20Passed-6E9F18?style=for-the-badge&logo=vitest)](file:///C:/Users/marve/Desktop/AI-286-Builds/Build_47/faqService.spec.js)
+[![Version](https://img.shields.io/badge/Release-v1.0.0-blue?style=for-the-badge)](file:///C:/Users/marve/Desktop/AI-286-Builds/Build_47/CHANGELOG.md)
 
 ---
 
 ## 🌟 Overview
 
-**NexusCloud Interactive Knowledge Base & FAQ Center** (Build 47) is a high-performance enterprise documentation portal engineered with **Alpine.js 3.x** and **Express.js**. Built as if for a production client needing minimal JavaScript overhead, it delivers complete interactive functionality—smooth expandable accordions, tabbed category filtering, custom dropdowns, real-time debounced auto-suggest search, SDK code vaults with copy buttons, ticket SLA tracking drawers, feedback analytics heatmaps, dark/light theme switching, and offline markdown cheat sheet exporters.
+**NexusCloud Interactive Knowledge Base & FAQ Center** is a modern enterprise documentation portal built with **Alpine.js 3.x** and **Express.js**. Designed for real-world client performance, it delivers rich interactivity—expandable accordions, category tabs, custom dropdowns, live search filtering, helpfulness voting, and support ticket modals—with minimal JavaScript overhead.
 
-### 🌐 Production Deployment Links
+### 🌐 Live Production Demo
 - **Live Vercel Application**: [https://alpinejs-interactive-faq-build47.vercel.app](https://alpinejs-interactive-faq-build47.vercel.app)
-- **GitHub Repository**: [https://github.com/breakingthebot/alpinejs-interactive-faq-build47](https://github.com/breakingthebot/alpinejs-interactive-faq-build47)
+- **GitHub Codebase**: [https://github.com/breakingthebot/alpinejs-interactive-faq-build47](https://github.com/breakingthebot/alpinejs-interactive-faq-build47)
 
 ---
 
-## 🔥 Feature Highlights Across Iterations
+## 🔥 Key Features
 
-- **v0.1.0 — Core Alpine.js Accordion & Portal Foundation**: Expandable accordions with `x-collapse`, category tabs, search input, helpfulness voting, and support ticket modal.
+- **🚀 Minimal JS Framework Overhead**: Powered by **Alpine.js 3.x** declarative directives (`x-data`, `x-show`, `x-collapse`, `x-model`, `x-transition`).
+- **🔗 Shareable Direct Link Generator**: Copy deep links (`#faq-faq_2`) directly to individual FAQ articles with automatic URL hash expansion, auto-scrolling, and glowing card highlight animation.
+- **💾 Interactive Filter Preset Manager**: Save custom search queries and category filter combinations into one-click quick preset chips with local storage sync.
 - **v0.2.0 — Personal Saved Articles & Offline Bookmarking**: Pin articles to `localStorage` with quick-access navbar count chips and `📌 Saved` category filter tab.
 - **v0.3.0 — FAQ Markdown Reference Guide Generator**: Single-click export of category-filtered FAQ articles as a formatted Markdown developer guide (`nexus_faq_cheatsheet.md`).
 - **v0.4.0 — Interactive SDK Code Snippet Copy Vault**: Tabbed code block selector for cURL, Python SDK, and Node.js SDK with one-click clipboard copying (`📋 Copy Code` -> `✅ Copied!`).
