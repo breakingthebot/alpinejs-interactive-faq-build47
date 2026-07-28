@@ -9,6 +9,8 @@ import {
   getCodeSnippet,
   getSearchSuggestions,
   getFeedbackAnalytics,
+  getQuizQuestions,
+  gradeQuiz,
   escalateTicketP1,
   getKeyboardShortcuts,
   getShareableLink,
@@ -34,6 +36,24 @@ describe('faqService', () => {
     expect(faqs.length).toBe(6);
     expect(faqs[0].popularityScore).toBeGreaterThanOrEqual(faqs[1].popularityScore);
     expect(faqs[0].question).toContain('rate limiting');
+  });
+
+  it('retrieves quiz questions list for self-assessment', () => {
+    const questions = getQuizQuestions();
+    expect(questions.length).toBe(3);
+    expect(questions[0].options.length).toBe(4);
+    expect(questions[0].question).toContain('RPM');
+  });
+
+  it('grades quiz answers accurately and assigns architect badge', () => {
+    const perfectScore = gradeQuiz({ q1: 2, q2: 1, q3: 2 });
+    expect(perfectScore.percentage).toBe(100);
+    expect(perfectScore.badge).toContain('Certified Nexus AI Architect');
+    expect(perfectScore.breakdown.every(b => b.isCorrect)).toBe(true);
+
+    const partialScore = gradeQuiz({ q1: 2, q2: 0, q3: 0 });
+    expect(partialScore.percentage).toBe(33);
+    expect(partialScore.badge).toContain('Developer Novice');
   });
 
   it('escalates support ticket to P1 Critical priority successfully', () => {

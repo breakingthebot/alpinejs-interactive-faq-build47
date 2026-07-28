@@ -159,6 +159,30 @@ const INITIAL_TICKETS = [
   }
 ];
 
+const QUIZ_QUESTIONS = [
+  {
+    id: 'q1',
+    question: 'What is the dedicated Enterprise Rate Limit ceiling for API Requests Per Minute (RPM)?',
+    options: ['1,000 RPM', '5,000 RPM', '10,000 RPM', '50,000 RPM'],
+    correctIndex: 2,
+    explanation: 'Enterprise tier accounts enjoy dedicated pools up to 10,000 Requests Per Minute (RPM) with automatic burst failover.'
+  },
+  {
+    id: 'q2',
+    question: 'How are fine-tuned custom adapter LLM weights encrypted at rest?',
+    options: ['Base64 obfuscation', 'AWS KMS / Azure Key Vault AES-256 keys', 'Standard MD5 hashing', 'Plaintext inside S3'],
+    correctIndex: 1,
+    explanation: 'Weights and checkpoints are encrypted at rest using customer-managed AWS KMS / Azure Key Vault keys (AES-256) inside Nitro Enclaves.'
+  },
+  {
+    id: 'q3',
+    question: 'What is the uptime guarantee under the financially backed Enterprise SLA?',
+    options: ['99.0%', '99.9%', '99.99%', '100% Zero-Downtime'],
+    correctIndex: 2,
+    explanation: 'NexusCloud guarantees 99.99% uptime with prorated tier credit refunds for any cycle exceeding 0.01% downtime.'
+  }
+];
+
 let faqsStore = [...INITIAL_FAQS];
 let ticketsStore = [...INITIAL_TICKETS];
 
@@ -171,6 +195,45 @@ export function getCategories() {
     'Billing & Invoicing',
     'Model Deployment'
   ];
+}
+
+export function getQuizQuestions() {
+  return QUIZ_QUESTIONS.map(q => ({
+    id: q.id,
+    question: q.question,
+    options: q.options
+  }));
+}
+
+export function gradeQuiz(answers = {}) {
+  let correctCount = 0;
+  const breakdown = QUIZ_QUESTIONS.map(q => {
+    const selected = answers[q.id];
+    const isCorrect = selected === q.correctIndex;
+    if (isCorrect) correctCount += 1;
+
+    return {
+      id: q.id,
+      question: q.question,
+      selectedOption: selected !== undefined ? q.options[selected] : 'No answer',
+      correctOption: q.options[q.correctIndex],
+      isCorrect,
+      explanation: q.explanation
+    };
+  });
+
+  const percentage = Number(((correctCount / QUIZ_QUESTIONS.length) * 100).toFixed(0));
+  let badge = '🥉 Developer Novice';
+  if (percentage === 100) badge = '🏆 Certified Nexus AI Architect';
+  else if (percentage >= 66) badge = '🥈 Senior Integration Engineer';
+
+  return {
+    correctCount,
+    totalQuestions: QUIZ_QUESTIONS.length,
+    percentage,
+    badge,
+    breakdown
+  };
 }
 
 export function escalateTicketP1(ticketId, reason = 'Critical Production Outage Risk') {

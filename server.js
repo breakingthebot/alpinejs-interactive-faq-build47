@@ -127,6 +127,21 @@ app.post('/api/tickets', (req, res) => {
   }
 });
 
+// GET /api/quiz - Get diagnostic quiz questions
+app.get('/api/quiz', (req, res) => {
+  return res.json({ success: true, questions: getQuizQuestions() });
+});
+
+// POST /api/quiz/grade - Grade developer quiz answers
+app.post('/api/quiz/grade', (req, res) => {
+  try {
+    const result = gradeQuiz(req.body || {});
+    return res.json({ success: true, result });
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+  }
+});
+
 // POST /api/tickets/:id/escalate - Escalate ticket to P1 Critical SLA
 app.post('/api/tickets/:id/escalate', (req, res) => {
   try {

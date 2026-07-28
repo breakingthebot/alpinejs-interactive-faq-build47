@@ -78,6 +78,7 @@
             <a href="#faqs" class="dropdown-item" @click="open = false">📚 Developer Knowledge Base</a>
             <a href="#saved" class="dropdown-item" @click="open = false; setCategory('Bookmarked')">📌 Saved Offline Articles (<span x-text="bookmarkedIds.length"></span>)</a>
             <a href="#analytics" class="dropdown-item" @click="open = false; openAnalyticsModal()">📊 Feedback Analytics Heatmap</a>
+            <button type="button" class="dropdown-item" @click="open = false; openQuizModal()">🧠 Self-Assessment Diagnostic Quiz</button>
             <button type="button" class="dropdown-item" @click="open = false; showShortcutsModal = true">⌨️ Keyboard Shortcuts (Press ?)</button>
             <a href="#api" class="dropdown-item" @click="open = false">🔑 API Key Vault</a>
             <a href="#status" class="dropdown-item" @click="open = false">🟢 Live Systems Status (99.99%)</a>
@@ -514,7 +515,97 @@
       </div>
     </div>
 
-    <!-- Keyboard Shortcuts Reference Modal Dialog -->
+    <!-- Interactive Quiz Modal Dialog -->
+  <div 
+    class="modal-backdrop" 
+    x-show="showQuizModal" 
+    x-transition.opacity
+    @click.self="showQuizModal = false"
+    @keydown.escape.window="showQuizModal = false"
+    style="display: none;"
+  >
+    <div class="modal-card card-glass quiz-modal-card" x-transition.scale>
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">🧠 Developer Self-Assessment Diagnostic Quiz</h2>
+          <p class="modal-subtitle">Test your knowledge on NexusCloud API quotas, encryption, and SLA guarantees.</p>
+        </div>
+        <button type="button" class="btn-close-modal" @click="showQuizModal = false">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Quiz Form View -->
+        <div x-show="!quizResult">
+          <template x-for="(q, idx) in quizQuestions" :key="q.id">
+            <div class="quiz-question-card">
+              <h4 class="quiz-q-title"><span x-text="'Q' + (idx + 1) + '.'"></span> <span x-text="q.question"></span></h4>
+              <div class="quiz-options-grid">
+                <template x-for="(opt, oIdx) in q.options" :key="oIdx">
+                  <button 
+                    type="button" 
+                    class="quiz-option-btn" 
+                    :class="{ 'selected': quizAnswers[q.id] === oIdx }"
+                    @click="selectQuizOption(q.id, oIdx)"
+                  >
+                    <span class="quiz-opt-letter" x-text="['A', 'B', 'C', 'D'][oIdx]"></span>
+                    <span x-text="opt"></span>
+                  </button>
+                </template>
+              </div>
+            </div>
+          </template>
+
+          <button 
+            type="button" 
+            class="btn-submit-quiz" 
+            @click="submitQuiz()"
+            :disabled="Object.keys(quizAnswers).length < quizQuestions.length"
+          >
+            🎯 Submit Assessment Answers
+          </button>
+        </div>
+
+        <!-- Quiz Results View -->
+        <div class="quiz-results-view" x-show="quizResult" x-transition>
+          <template x-if="quizResult">
+            <div>
+              <div class="quiz-score-header">
+                <div class="quiz-score-circle">
+                  <span class="score-num" x-text="quizResult.percentage + '%'"></span>
+                  <span class="score-label" x-text="quizResult.correctCount + ' / ' + quizResult.totalQuestions + ' Correct'"></span>
+                </div>
+                <div class="quiz-badge-chip" x-text="quizResult.badge"></div>
+              </div>
+
+              <h4 class="breakdown-heading">Detailed Answers Breakdown:</h4>
+              <div class="quiz-breakdown-list">
+                <template x-for="item in quizResult.breakdown" :key="item.id">
+                  <div class="breakdown-card" :class="item.isCorrect ? 'correct' : 'incorrect'">
+                    <div class="breakdown-header">
+                      <span x-text="item.isCorrect ? '✅ Correct' : '❌ Incorrect'"></span>
+                      <strong x-text="item.question"></strong>
+                    </div>
+                    <p class="breakdown-details">
+                      Your answer: <code x-text="item.selectedOption"></code> | Correct: <code x-text="item.correctOption"></code>
+                    </p>
+                    <p class="breakdown-exp" x-text="item.explanation"></p>
+                  </div>
+                </template>
+              </div>
+
+              <button type="button" class="btn-retake-quiz" @click="quizResult = null; quizAnswers = {}">
+                🔄 Retake Diagnostic Assessment
+              </button>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" @click="showQuizModal = false">Close Modal</button>
+      </div>
+    </div>
+  </div>
   <div 
     class="modal-backdrop" 
     x-show="showShortcutsModal" 
@@ -675,6 +766,10 @@
         analytics: null,
         showAnalyticsModal: false,
         showShortcutsModal: false,
+        showQuizModal: false,
+        quizQuestions: [],
+        quizAnswers: {},
+        quizResult: null,
         copiedFaqId: null,
         loading: false,
         showModal: false,
@@ -830,6 +925,38 @@
             }
           })
           .catch(() => this.showToast('Server connection error during P1 escalation', 'danger'));
+        openQuizModal() {
+          this.showQuizModal = true;
+          if (this.quizQuestions.length === 0) {
+            fetch('/api/quiz')
+              .then(res => res.json())
+              .then(data => {
+                this.quizQuestions = data.questions || [];
+              })
+              .catch(err => console.error('Failed to load quiz questions', err));
+          }
+        },
+
+        selectQuizOption(qId, oIdx) {
+          this.quizAnswers[qId] = oIdx;
+        },
+
+        submitQuiz() {
+          fetch('/api/quiz/grade', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.quizAnswers)
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              this.quizResult = data.result;
+              this.showToast(`🎯 Assessment Graded: ${data.result.percentage}% (${data.result.badge})`, 'success');
+            }
+          })
+          .catch(() => this.showToast('Error grading quiz answers', 'danger'));
+        },
+
         openAnalyticsModal() {
           this.showAnalyticsModal = true;
           fetch('/api/analytics/feedback')
