@@ -17,25 +17,6 @@
 
 ---
 
-## 🎯 Topics Covered & Core Learning Objectives
-
-- **Alpine.js Directives & Micro-Interactivity**:
-  - `x-data`, `x-init`, `$watch` reactive state management.
-  - Smooth accordion collapse animations via `@alpinejs/collapse` (`x-collapse`).
-  - Modal backdrops & slide-out drawers with transition animations (`x-transition`, `@click.outside`, `@keydown.escape.window`).
-  - Interactive tabbed SDK code snippet vault (cURL, Python SDK, Node.js SDK) with clipboard copying (`navigator.clipboard`).
-- **Real-Time Client & Server Interactions**:
-  - Express.js REST API controllers (`/api/faqs`, `/api/categories`, `/api/tickets`, `/api/analytics/feedback`, `/api/faqs/suggest`).
-  - Debounced search auto-suggestions (`x-model.debounce.200ms`).
-  - Markdown reference guide document exporter generating `.md` file attachments (`GET /api/faqs/export-markdown`).
-- **State Persistence & Theme Engine**:
-  - `localStorage` client-side bookmarking (`nexus_faq_bookmarks`) and filter preset saving (`nexus_presets`).
-  - Theme customizer supporting dark glassmorphism and crisp enterprise light mode (`nexus_theme`).
-- **Domain Logic & Automated Unit Testing**:
-  - Vitest test suite with 21 unit tests covering category statistics, search auto-suggestions, batch bookmarking, SLA tracking, feedback analytics, and filter preset validation.
-
----
-
 ## 🔥 Feature Highlights Across Iterations
 
 - **v0.1.0 — Core Alpine.js Accordion & Portal Foundation**: Expandable accordions with `x-collapse`, category tabs, search input, helpfulness voting, and support ticket modal.
