@@ -50,19 +50,37 @@ app.get('/api/faqs/suggest', (req, res) => {
   res.json({ suggestions });
 });
 
-// GET /api/faqs/export-markdown - Export FAQ Reference Cheat Sheet as Markdown File
+// GET /api/faqs/export-markdown - Download Markdown Reference Guide
 app.get('/api/faqs/export-markdown', (req, res) => {
-  const searchQuery = req.query.q || '';
-  const categoryFilter = req.query.category || 'All';
-  let bookmarkedIds = [];
-  if (req.query.bookmarkedIds) {
-    bookmarkedIds = req.query.bookmarkedIds.split(',').filter(Boolean);
-  }
+  const { q = '', category = 'All', bookmarkedIds = '' } = req.query;
+  const parsedBookmarks = bookmarkedIds ? bookmarkedIds.split(',') : [];
+  const mdContent = exportFaqsAsMarkdown(q, category, parsedBookmarks);
 
-  const markdownContent = exportFaqsAsMarkdown(searchQuery, categoryFilter, bookmarkedIds);
-  res.setHeader('Content-Type', 'text/markdown');
+  res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
   res.setHeader('Content-Disposition', 'attachment; filename="nexus_faq_cheatsheet.md"');
-  res.status(200).send(markdownContent);
+  return res.send(mdContent);
+});
+
+// GET /api/faqs/export-csv - Download CSV Spreadsheet
+app.get('/api/faqs/export-csv', (req, res) => {
+  const { q = '', category = 'All', bookmarkedIds = '' } = req.query;
+  const parsedBookmarks = bookmarkedIds ? bookmarkedIds.split(',') : [];
+  const csvContent = exportFaqsAsCsv(q, category, parsedBookmarks);
+
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="nexus_faq_export.csv"');
+  return res.send(csvContent);
+});
+
+// GET /api/faqs/export-json - Download Raw JSON Dataset
+app.get('/api/faqs/export-json', (req, res) => {
+  const { q = '', category = 'All', bookmarkedIds = '' } = req.query;
+  const parsedBookmarks = bookmarkedIds ? bookmarkedIds.split(',') : [];
+  const jsonContent = exportFaqsAsJson(q, category, parsedBookmarks);
+
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="nexus_faq_dataset.json"');
+  return res.send(jsonContent);
 });
 
 // GET /api/categories - Categories and counts

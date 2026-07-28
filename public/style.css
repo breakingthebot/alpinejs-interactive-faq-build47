@@ -520,7 +520,59 @@ body {
   transform: scale(1.02);
 }
 
-/* Toolbar Right Actions */
+/* Export Dropdown Styles */
+.export-dropdown-wrapper {
+  position: relative;
+}
+
+.btn-export-dropdown {
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-export-dropdown:hover {
+  background: rgba(139, 92, 246, 0.25);
+  color: #ffffff;
+}
+
+.export-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 210px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(16px);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+
+.export-item {
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.export-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
 .toolbar-right-actions {
   display: flex;
   align-items: center;

@@ -2,8 +2,8 @@
 
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Demo-000000?style=for-the-badge&logo=vercel)](https://alpinejs-interactive-faq-build47.vercel.app)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/breakingthebot/alpinejs-interactive-faq-build47)
-[![Tests](https://img.shields.io/badge/Vitest-28%20Passed-6E9F18?style=for-the-badge&logo=vitest)](file:///C:/Users/marve/Desktop/AI-286-Builds/Build_47/faqService.spec.js)
-[![Version](https://img.shields.io/badge/Release-v1.3.0-blue?style=for-the-badge)](file:///C:/Users/marve/Desktop/AI-286-Builds/Build_47/CHANGELOG.md)
+[![Tests](https://img.shields.io/badge/Vitest-30%20Passed-6E9F18?style=for-the-badge&logo=vitest)](file:///C:/Users/marve/Desktop/AI-286-Builds/Build_47/faqService.spec.js)
+[![Version](https://img.shields.io/badge/Release-v1.4.0-blue?style=for-the-badge)](file:///C:/Users/marve/Desktop/AI-286-Builds/Build_47/CHANGELOG.md)
 
 ---
 
@@ -20,6 +20,7 @@
 ## 🔥 Key Features
 
 - **🚀 Minimal JS Framework Overhead**: Powered by **Alpine.js 3.x** declarative directives (`x-data`, `x-show`, `x-collapse`, `x-model`, `x-transition`).
+- **📥 Multi-Format Article Data Downloader**: Single-click export of category-filtered FAQ documentation in formatted Markdown (`.md`), CSV Spreadsheet (`.csv`), or raw JSON dataset (`.json`).
 - **🧠 Interactive Quiz & Self-Assessment Diagnostics**: Developer knowledge test covering rate limits, KMS encryption, and SLAs with automated grading (`100%`) and certification badges (`🏆 Certified Nexus AI Architect`).
 - **🚨 Support Ticket SLA Escalation Trigger & P1 Alerting**: Single-click escalation to P1 Critical priority with 5-minute response window SLA badges and active outage alert banner.
 - **⌨️ Keyboard Navigation & Shortcuts Vault**: Instant `/` key search focus, `?` shortcuts reference modal, `Esc` dismissal, and `j` / `k` / arrow keys accordion navigation.

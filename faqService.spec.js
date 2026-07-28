@@ -9,6 +9,8 @@ import {
   getCodeSnippet,
   getSearchSuggestions,
   getFeedbackAnalytics,
+  exportFaqsAsCsv,
+  exportFaqsAsJson,
   getQuizQuestions,
   gradeQuiz,
   escalateTicketP1,
@@ -36,6 +38,21 @@ describe('faqService', () => {
     expect(faqs.length).toBe(6);
     expect(faqs[0].popularityScore).toBeGreaterThanOrEqual(faqs[1].popularityScore);
     expect(faqs[0].question).toContain('rate limiting');
+  });
+
+  it('exports filtered FAQs as CSV spreadsheet format', () => {
+    const csv = exportFaqsAsCsv('', 'API & SDK Integration');
+    expect(csv).toContain('ID,Question,Category,PopularityScore');
+    expect(csv).toContain('faq_1');
+    expect(csv).toContain('API & SDK Integration');
+  });
+
+  it('exports filtered FAQs as raw JSON dataset', () => {
+    const jsonStr = exportFaqsAsJson('', 'Security & Data Privacy');
+    const parsed = JSON.parse(jsonStr);
+    expect(Array.isArray(parsed)).toBe(true);
+    expect(parsed[0].category).toBe('Security & Data Privacy');
+    expect(parsed[0].id).toBe('faq_2');
   });
 
   it('retrieves quiz questions list for self-assessment', () => {

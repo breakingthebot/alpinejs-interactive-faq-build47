@@ -5,6 +5,14 @@ All notable changes to **Build 47 (NexusCloud Alpine.js Interactive Knowledge Ba
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-07-28
+
+### Added
+- Integrated **FAQ Multi-Format Article Downloader (JSON / CSV / PDF)** in `faqService.js` and `public/index.html`.
+- Added CSV exporter (`exportFaqsAsCsv`), JSON dataset exporter (`exportFaqsAsJson`), and Express API routes `GET /api/faqs/export-csv` & `GET /api/faqs/export-json`.
+- Updated `public/index.html` and `public/style.css` replacing single export button with **📥 Export Data** multi-format dropdown menu (`📝 Markdown Guide (.md)`, `📊 CSV Spreadsheet (.csv)`, `📦 Raw JSON Dataset (.json)`).
+- Added unit tests in `faqService.spec.js` (30 total unit tests passing).
+
 ## [1.3.0] - 2026-07-27
 
 ### Added

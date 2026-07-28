@@ -189,14 +189,40 @@
               💾 Save Preset
             </button>
 
-            <a 
-              :href="'/api/faqs/export-markdown?category=' + activeCategory + '&q=' + searchQuery + '&bookmarkedIds=' + bookmarkedIds.join(',')" 
-              class="btn-export-md" 
-              download 
-              title="Download Category FAQs as Markdown Developer Guide (.md)"
-            >
-              📥 Export Markdown Guide
-            </a>
+          <!-- Export Documentation Data Multi-Format Dropdown -->
+          <div class="export-dropdown-wrapper" x-data="{ exportOpen: false }" @click.outside="exportOpen = false">
+            <button type="button" class="btn-export-dropdown" @click="exportOpen = !exportOpen" title="Export category FAQs in Markdown, CSV, or JSON formats">
+              <span>📥 Export Data</span>
+              <span class="caret" :class="{ 'rotate': exportOpen }">▼</span>
+            </button>
+
+            <div class="export-menu" x-show="exportOpen" x-transition>
+              <a 
+                :href="'/api/faqs/export-markdown?category=' + activeCategory + '&q=' + searchQuery + '&bookmarkedIds=' + bookmarkedIds.join(',')" 
+                class="export-item" 
+                download 
+                @click="exportOpen = false"
+              >
+                📝 Markdown Guide (.md)
+              </a>
+              <a 
+                :href="'/api/faqs/export-csv?category=' + activeCategory + '&q=' + searchQuery + '&bookmarkedIds=' + bookmarkedIds.join(',')" 
+                class="export-item" 
+                download 
+                @click="exportOpen = false"
+              >
+                📊 CSV Spreadsheet (.csv)
+              </a>
+              <a 
+                :href="'/api/faqs/export-json?category=' + activeCategory + '&q=' + searchQuery + '&bookmarkedIds=' + bookmarkedIds.join(',')" 
+                class="export-item" 
+                download 
+                @click="exportOpen = false"
+              >
+                📦 Raw JSON Dataset (.json)
+              </a>
+            </div>
+          </div>
 
           <!-- Alpine Custom Sorting Dropdown -->
           <div class="sort-dropdown-wrapper" x-data="{ sortOpen: false }" @click.outside="sortOpen = false">

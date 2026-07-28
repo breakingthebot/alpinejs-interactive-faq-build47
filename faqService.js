@@ -197,6 +197,29 @@ export function getCategories() {
   ];
 }
 
+export function exportFaqsAsCsv(searchQuery = '', categoryFilter = 'All', bookmarkedIds = []) {
+  const targetFaqs = getAllFaqs(searchQuery, categoryFilter, 'popular', bookmarkedIds);
+
+  const headers = ['ID', 'Question', 'Category', 'PopularityScore', 'Upvotes', 'Downvotes', 'LastUpdated', 'Tags'];
+  const rows = targetFaqs.map(f => [
+    f.id,
+    `"${f.question.replace(/"/g, '""')}"`,
+    `"${f.category}"`,
+    f.popularityScore,
+    f.upvotes,
+    f.downvotes,
+    f.lastUpdated,
+    `"${f.tags.join(';')}"`
+  ]);
+
+  return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+}
+
+export function exportFaqsAsJson(searchQuery = '', categoryFilter = 'All', bookmarkedIds = []) {
+  const targetFaqs = getAllFaqs(searchQuery, categoryFilter, 'popular', bookmarkedIds);
+  return JSON.stringify(targetFaqs, null, 2);
+}
+
 export function getQuizQuestions() {
   return QUIZ_QUESTIONS.map(q => ({
     id: q.id,
