@@ -5,6 +5,14 @@ All notable changes to **Build 47 (NexusCloud Alpine.js Interactive Knowledge Ba
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-07-27
+
+### Added
+- Integrated **FAQ Keyboard Navigation & Shortcuts Vault** in `faqService.js` and `public/index.html`.
+- Added keyboard shortcuts registry domain helper (`getKeyboardShortcuts`), global keydown listener (`@keydown.window`), `/` key instant search focus, `?` key shortcuts modal trigger (`showShortcutsModal`), and `Esc` key modal/drawer dismissal.
+- Added `j` / `k` and `ArrowDown` / `ArrowUp` accordion navigation handlers (`navigateFaq`) and styled `<kbd>` key badges.
+- Added unit tests in `faqService.spec.js` (24 total unit tests passing).
+
 ## [1.0.0] - 2026-07-27
 
 ### Added

@@ -9,6 +9,7 @@ import {
   getCodeSnippet,
   getSearchSuggestions,
   getFeedbackAnalytics,
+  getKeyboardShortcuts,
   getShareableLink,
   createFilterPreset,
   validateTheme,
@@ -32,6 +33,13 @@ describe('faqService', () => {
     expect(faqs.length).toBe(6);
     expect(faqs[0].popularityScore).toBeGreaterThanOrEqual(faqs[1].popularityScore);
     expect(faqs[0].question).toContain('rate limiting');
+  });
+
+  it('retrieves keyboard shortcuts registry list', () => {
+    const shortcuts = getKeyboardShortcuts();
+    expect(shortcuts.length).toBe(5);
+    expect(shortcuts[0].key).toBe('/');
+    expect(shortcuts[1].key).toBe('?');
   });
 
   it('generates shareable deep-link URLs accurately', () => {

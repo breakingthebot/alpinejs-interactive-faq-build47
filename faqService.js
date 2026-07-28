@@ -169,6 +169,16 @@ export function getCategories() {
   ];
 }
 
+export function getKeyboardShortcuts() {
+  return [
+    { key: '/', description: 'Focus search input box' },
+    { key: '?', description: 'Toggle keyboard shortcuts reference modal' },
+    { key: 'Esc', description: 'Close open modals & slide-out drawers' },
+    { key: 'j / ↓', description: 'Navigate & expand next FAQ accordion article' },
+    { key: 'k / ↑', description: 'Navigate & expand previous FAQ accordion article' }
+  ];
+}
+
 export function getShareableLink(faqId, origin = 'https://alpinejs-interactive-faq-build47.vercel.app') {
   const faq = getFaqById(faqId);
   if (!faq) {

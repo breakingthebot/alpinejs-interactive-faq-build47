@@ -15,7 +15,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-dark text-light" :class="{ 'theme-light': currentTheme === 'light' }" x-data="faqApp()" x-init="initData()">
+<body class="bg-dark text-light" :class="{ 'theme-light': currentTheme === 'light' }" x-data="faqApp()" x-init="initData()" @keydown.window="handleGlobalKeydown($event)">
 
   <!-- Toast Notification Alert -->
   <div class="toast-container" x-show="toast.visible" x-transition>
@@ -78,6 +78,7 @@
             <a href="#faqs" class="dropdown-item" @click="open = false">📚 Developer Knowledge Base</a>
             <a href="#saved" class="dropdown-item" @click="open = false; setCategory('Bookmarked')">📌 Saved Offline Articles (<span x-text="bookmarkedIds.length"></span>)</a>
             <a href="#analytics" class="dropdown-item" @click="open = false; openAnalyticsModal()">📊 Feedback Analytics Heatmap</a>
+            <button type="button" class="dropdown-item" @click="open = false; showShortcutsModal = true">⌨️ Keyboard Shortcuts (Press ?)</button>
             <a href="#api" class="dropdown-item" @click="open = false">🔑 API Key Vault</a>
             <a href="#status" class="dropdown-item" @click="open = false">🟢 Live Systems Status (99.99%)</a>
             <div class="dropdown-divider"></div>
@@ -100,14 +101,17 @@
 
         <!-- Alpine Live Search Bar with Auto-Suggestions Dropdown -->
         <div class="search-box-wrapper" @click.outside="showSuggestions = false">
-          <span class="search-box-icon">🔍</span>
-          <input 
-            type="text" 
-            class="search-box-input" 
-            placeholder="Search questions (e.g. rate limits, SOC2 encryption, Kubernetes, SLA)..."
-            x-model.debounce.200ms="searchQuery"
-            @focus="if(searchQuery.length >= 2) fetchSuggestions()"
-          />
+          <div class="search-input-group">
+            <span class="search-icon">🔍</span>
+            <input 
+              x-ref="searchInput"
+              type="text" 
+              class="search-box-input" 
+              placeholder="Search AI platform docs, error codes, RPM quotas, KMS... (Press '/' to focus)" 
+              x-model.debounce.200ms="searchQuery"
+              @focus="if (searchQuery.trim().length >= 2) fetchSuggestions()"
+            >
+          </div>
           <button 
             type="button" 
             class="btn-clear-search" 
@@ -473,6 +477,63 @@
       </div>
     </div>
 
+    <!-- Keyboard Shortcuts Reference Modal Dialog -->
+  <div 
+    class="modal-backdrop" 
+    x-show="showShortcutsModal" 
+    x-transition.opacity
+    @click.self="showShortcutsModal = false"
+    @keydown.escape.window="showShortcutsModal = false"
+    style="display: none;"
+  >
+    <div class="modal-card card-glass shortcuts-modal-card" x-transition.scale>
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">⌨️ Keyboard Navigation & Shortcuts Vault</h2>
+          <p class="modal-subtitle">Power-user accessibility shortcuts for rapid documentation browsing.</p>
+        </div>
+        <button type="button" class="btn-close-modal" @click="showShortcutsModal = false">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <table class="shortcuts-table">
+          <thead>
+            <tr>
+              <th>Shortcut Key</th>
+              <th>Action Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><kbd class="kbd-chip">/</kbd></td>
+              <td>Instant focus on search query input box</td>
+            </tr>
+            <tr>
+              <td><kbd class="kbd-chip">?</kbd> (Shift + /)</td>
+              <td>Toggle this Keyboard Shortcuts reference vault</td>
+            </tr>
+            <tr>
+              <td><kbd class="kbd-chip">Esc</kbd></td>
+              <td>Close open modal dialogs & support ticket drawer</td>
+            </tr>
+            <tr>
+              <td><kbd class="kbd-chip">j</kbd> or <kbd class="kbd-chip">↓</kbd></td>
+              <td>Navigate & expand next FAQ accordion article</td>
+            </tr>
+            <tr>
+              <td><kbd class="kbd-chip">k</kbd> or <kbd class="kbd-chip">↑</kbd></td>
+              <td>Navigate & expand previous FAQ accordion article</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" @click="showShortcutsModal = false">Close Reference</button>
+      </div>
+    </div>
+  </div>
+
     <!-- Feedback Analytics Modal (Alpine x-show & transitions) -->
     <div 
       class="modal-backdrop" 
@@ -576,6 +637,7 @@
         showTicketDrawer: false,
         analytics: null,
         showAnalyticsModal: false,
+        showShortcutsModal: false,
         copiedFaqId: null,
         loading: false,
         showModal: false,
@@ -620,6 +682,54 @@
           }, 300);
         },
 
+        handleGlobalKeydown(e) {
+          // Ignore key shortcuts if active element is an input, textarea, or select
+          const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+          if (tag === 'input' || tag === 'textarea' || tag === 'select') {
+            if (e.key === 'Escape') {
+              document.activeElement.blur();
+            }
+            return;
+          }
+
+          if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+            if (this.$refs.searchInput) {
+              this.$refs.searchInput.focus();
+            }
+          } else if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+            e.preventDefault();
+            this.showShortcutsModal = !this.showShortcutsModal;
+          } else if (e.key === 'Escape') {
+            this.showModal = false;
+            this.showAnalyticsModal = false;
+            this.showShortcutsModal = false;
+            this.showTicketDrawer = false;
+            this.showSuggestions = false;
+          } else if (e.key === 'j' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            this.navigateFaq(1);
+          } else if (e.key === 'k' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            this.navigateFaq(-1);
+          }
+        },
+
+        navigateFaq(direction) {
+          if (!this.faqs || this.faqs.length === 0) return;
+          const currentIndex = this.faqs.findIndex(f => f.id === this.openFaqId);
+          let newIndex = currentIndex + direction;
+
+          if (newIndex < 0) newIndex = 0;
+          if (newIndex >= this.faqs.length) newIndex = this.faqs.length - 1;
+
+          const targetFaq = this.faqs[newIndex];
+          if (targetFaq) {
+            this.openFaqId = targetFaq.id;
+            const el = document.getElementById('faq-' + targetFaq.id);
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         copyShareLink(faq) {
           const link = `${window.location.origin}${window.location.pathname}#faq-${faq.id}`;
           navigator.clipboard.writeText(link).then(() => {
