@@ -5,6 +5,14 @@ All notable changes to **Build 47 (NexusCloud Alpine.js Interactive Knowledge Ba
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-07-27
+
+### Added
+- Integrated **FAQ Interactive Filter Preset Manager** in `faqService.js` and `public/index.html`.
+- Added preset creator domain function (`createFilterPreset`), quick presets chips bar (`⚡ Security & KMS`, `⚡ API Rates`, `⚡ Air-Gapped K8s`), and `localStorage` persistence (`nexus_presets`).
+- Updated `public/index.html` and `public/style.css` with **💾 Save Preset** toolbar button, preset chip application handlers (`applyPreset`), and preset removal tags.
+- Added unit tests in `faqService.spec.js` (21 total unit tests passing).
+
 ## [0.8.0] - 2026-07-27
 
 ### Added

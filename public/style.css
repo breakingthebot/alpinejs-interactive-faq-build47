@@ -445,6 +445,81 @@ body {
   border-radius: 10px;
 }
 
+/* Presets Toolbar Bar */
+.presets-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--card-border);
+  overflow-x: auto;
+}
+
+.presets-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.presets-chips-list {
+  display: flex;
+  gap: 8px;
+}
+
+.preset-chip {
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  transition: all 0.2s ease;
+}
+
+.preset-chip.active {
+  background: rgba(99, 102, 241, 0.3);
+  border-color: #818cf8;
+}
+
+.preset-chip-btn {
+  background: transparent;
+  border: none;
+  color: #c4b5fd;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.preset-chip-remove {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+.btn-save-preset {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-save-preset:hover {
+  background: rgba(16, 185, 129, 0.25);
+  color: #ffffff;
+  transform: scale(1.02);
+}
+
 /* Toolbar Right Actions */
 .toolbar-right-actions {
   display: flex;

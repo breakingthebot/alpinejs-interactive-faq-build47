@@ -142,33 +142,56 @@
 
     <!-- Main FAQ & Interactive Tools Area -->
     <main class="main-layout">
-      <!-- Category Tabs & Custom Filter Toolbar -->
+      <!-- Category Tabs, Presets & Custom Filter Toolbar -->
       <div class="toolbar-card card-glass">
-        <!-- Alpine Category Tabs -->
-        <div class="tabs-container">
-          <template x-for="cat in categories" :key="cat">
-            <button 
-              type="button" 
-              class="tab-btn" 
-              :class="{ 'active': activeCategory === cat, 'tab-bookmarked': cat === 'Bookmarked' }"
-              @click="setCategory(cat)"
-            >
-              <span x-text="cat === 'Bookmarked' ? '📌 Saved' : cat"></span>
-              <span class="tab-count" x-text="cat === 'Bookmarked' ? bookmarkedIds.length : (categoryStats[cat] || 0)"></span>
-            </button>
-          </template>
+        <!-- Filter Presets Bar -->
+        <div class="presets-bar" x-show="presets.length > 0">
+          <span class="presets-label">⚡ Saved Presets:</span>
+          <div class="presets-chips-list">
+            <template x-for="p in presets" :key="p.id">
+              <span class="preset-chip" :class="{ 'active': activeCategory === p.category && searchQuery === p.query }">
+                <button type="button" class="preset-chip-btn" @click="applyPreset(p)" x-text="p.name"></button>
+                <button type="button" class="preset-chip-remove" @click.stop="deletePreset(p.id)">&times;</button>
+              </span>
+            </template>
+          </div>
         </div>
 
-        <!-- Export Markdown Reference Button & Custom Sorting Dropdown -->
-        <div class="toolbar-right-actions">
-          <a 
-            :href="'/api/faqs/export-markdown?category=' + activeCategory + '&q=' + searchQuery + '&bookmarkedIds=' + bookmarkedIds.join(',')" 
-            class="btn-export-md" 
-            download 
-            title="Download Category FAQs as Markdown Developer Guide (.md)"
-          >
-            📥 Export Markdown Guide
-          </a>
+        <div class="toolbar-main-row">
+          <!-- Alpine Category Tabs -->
+          <div class="tabs-container">
+            <template x-for="cat in categories" :key="cat">
+              <button 
+                type="button" 
+                class="tab-btn" 
+                :class="{ 'active': activeCategory === cat, 'tab-bookmarked': cat === 'Bookmarked' }"
+                @click="setCategory(cat)"
+              >
+                <span x-text="cat === 'Bookmarked' ? '📌 Saved' : cat"></span>
+                <span class="tab-count" x-text="cat === 'Bookmarked' ? bookmarkedIds.length : (categoryStats[cat] || 0)"></span>
+              </button>
+            </template>
+          </div>
+
+          <!-- Export Markdown & Save Preset Buttons -->
+          <div class="toolbar-right-actions">
+            <button 
+              type="button" 
+              class="btn-save-preset" 
+              @click="saveCurrentPreset()" 
+              title="Save current search & category filter as a quick preset"
+            >
+              💾 Save Preset
+            </button>
+
+            <a 
+              :href="'/api/faqs/export-markdown?category=' + activeCategory + '&q=' + searchQuery + '&bookmarkedIds=' + bookmarkedIds.join(',')" 
+              class="btn-export-md" 
+              download 
+              title="Download Category FAQs as Markdown Developer Guide (.md)"
+            >
+              📥 Export Markdown Guide
+            </a>
 
           <!-- Alpine Custom Sorting Dropdown -->
           <div class="sort-dropdown-wrapper" x-data="{ sortOpen: false }" @click.outside="sortOpen = false">
@@ -523,6 +546,7 @@
         activeCategory: 'All',
         sortBy: 'popular',
         currentTheme: localStorage.getItem('nexus_theme') || 'dark',
+        presets: JSON.parse(localStorage.getItem('nexus_presets') || '[{"id":"p1","name":"⚡ Security & KMS","category":"Security & Data Privacy","query":"KMS"},{"id":"p2","name":"⚡ API Rates","category":"API & SDK Integration","query":"rate"},{"id":"p3","name":"⚡ Air-Gapped K8s","category":"Model Deployment","query":"Kubernetes"}]'),
         categories: ['All', 'Bookmarked', 'API & SDK Integration', 'Security & Data Privacy', 'Enterprise SLA', 'Billing & Invoicing', 'Model Deployment'],
         categoryStats: {},
         faqs: [],
@@ -570,6 +594,35 @@
           this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
           localStorage.setItem('nexus_theme', this.currentTheme);
           this.showToast(this.currentTheme === 'light' ? '☀️ Switched to Crisp Enterprise Light Theme' : '🌙 Switched to Dark Glassmorphism Theme', 'success');
+        },
+
+        applyPreset(preset) {
+          this.activeCategory = preset.category || 'All';
+          this.searchQuery = preset.query || '';
+          this.fetchFaqs();
+          this.showToast(`Applied preset: "${preset.name}"`, 'success');
+        },
+
+        saveCurrentPreset() {
+          const name = prompt('Enter a name for this search preset:', `${this.activeCategory !== 'All' ? this.activeCategory : 'Search'}: "${this.searchQuery || 'All'}"`);
+          if (!name || !name.trim()) return;
+
+          const newPreset = {
+            id: 'pst_' + Date.now(),
+            name: name.trim(),
+            category: this.activeCategory,
+            query: this.searchQuery
+          };
+
+          this.presets.push(newPreset);
+          localStorage.setItem('nexus_presets', JSON.stringify(this.presets));
+          this.showToast(`💾 Filter preset "${name.trim()}" saved!`, 'success');
+        },
+
+        deletePreset(id) {
+          this.presets = this.presets.filter(p => p.id !== id);
+          localStorage.setItem('nexus_presets', JSON.stringify(this.presets));
+          this.showToast('Removed search preset.', 'success');
         },
 
         openAnalyticsModal() {

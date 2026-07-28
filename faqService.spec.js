@@ -9,6 +9,7 @@ import {
   getCodeSnippet,
   getSearchSuggestions,
   getFeedbackAnalytics,
+  createFilterPreset,
   validateTheme,
   exportFaqsAsMarkdown,
   getFaqById,
@@ -30,6 +31,18 @@ describe('faqService', () => {
     expect(faqs.length).toBe(6);
     expect(faqs[0].popularityScore).toBeGreaterThanOrEqual(faqs[1].popularityScore);
     expect(faqs[0].question).toContain('rate limiting');
+  });
+
+  it('creates custom search filter presets accurately', () => {
+    const preset = createFilterPreset('Security & KMS', 'Security & Data Privacy', 'KMS');
+    expect(preset.id).toContain('pst_');
+    expect(preset.name).toBe('Security & KMS');
+    expect(preset.category).toBe('Security & Data Privacy');
+    expect(preset.query).toBe('KMS');
+  });
+
+  it('throws error when creating filter preset with missing name', () => {
+    expect(() => createFilterPreset('')).toThrow('Preset name is required');
   });
 
   it('validates custom UI theme names accurately', () => {

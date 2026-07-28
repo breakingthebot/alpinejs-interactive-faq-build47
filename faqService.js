@@ -169,6 +169,19 @@ export function getCategories() {
   ];
 }
 
+export function createFilterPreset(name, category = 'All', query = '') {
+  if (!name || !name.trim()) {
+    throw new Error('Preset name is required');
+  }
+
+  return {
+    id: `pst_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+    name: name.trim(),
+    category,
+    query: query ? query.trim() : ''
+  };
+}
+
 export function validateTheme(themeName) {
   const allowed = ['dark', 'light'];
   if (!allowed.includes(themeName)) {
