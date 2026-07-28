@@ -169,6 +169,37 @@ export function getCategories() {
   ];
 }
 
+export function getFeedbackAnalytics() {
+  let totalUpvotes = 0;
+  let totalDownvotes = 0;
+
+  faqsStore.forEach(f => {
+    totalUpvotes += f.upvotes;
+    totalDownvotes += f.downvotes;
+  });
+
+  const totalVotes = totalUpvotes + totalDownvotes;
+  const satisfactionRate = totalVotes > 0 ? ((totalUpvotes / totalVotes) * 100).toFixed(1) : '100.0';
+
+  const topArticles = [...faqsStore]
+    .sort((a, b) => b.upvotes - a.upvotes)
+    .slice(0, 3)
+    .map(f => ({
+      id: f.id,
+      question: f.question,
+      upvotes: f.upvotes,
+      category: f.category
+    }));
+
+  return {
+    totalVotes,
+    totalUpvotes,
+    totalDownvotes,
+    satisfactionRate: Number(satisfactionRate),
+    topArticles
+  };
+}
+
 export function getSearchSuggestions(query = '') {
   if (!query || !query.trim() || query.trim().length < 2) return [];
 

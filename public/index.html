@@ -67,6 +67,7 @@
           <div class="dropdown-menu" x-show="open" x-transition>
             <a href="#faqs" class="dropdown-item" @click="open = false">📚 Developer Knowledge Base</a>
             <a href="#saved" class="dropdown-item" @click="open = false; setCategory('Bookmarked')">📌 Saved Offline Articles (<span x-text="bookmarkedIds.length"></span>)</a>
+            <a href="#analytics" class="dropdown-item" @click="open = false; openAnalyticsModal()">📊 Feedback Analytics Heatmap</a>
             <a href="#api" class="dropdown-item" @click="open = false">🔑 API Key Vault</a>
             <a href="#status" class="dropdown-item" @click="open = false">🟢 Live Systems Status (99.99%)</a>
             <div class="dropdown-divider"></div>
@@ -423,6 +424,82 @@
       </div>
     </div>
 
+    <!-- Feedback Analytics Modal (Alpine x-show & transitions) -->
+    <div 
+      class="modal-backdrop" 
+      x-show="showAnalyticsModal" 
+      x-transition:enter="transition-fade-enter"
+      x-transition:leave="transition-fade-leave"
+      @keydown.escape.window="showAnalyticsModal = false"
+    >
+      <div 
+        class="modal-panel card-glass analytics-modal-panel" 
+        @click.outside="showAnalyticsModal = false"
+        x-transition:enter="transition-modal-enter"
+        x-transition:leave="transition-modal-leave"
+      >
+        <div class="modal-header">
+          <div>
+            <h2>📊 Article Feedback Analytics Heatmap</h2>
+            <p class="modal-subtitle">Real-time developer satisfaction rating & content performance breakdown.</p>
+          </div>
+          <button type="button" class="modal-close" @click="showAnalyticsModal = false">&times;</button>
+        </div>
+
+        <div class="analytics-content" x-show="analytics">
+          <div class="analytics-stats-grid">
+            <div class="analytics-stat-card card-glass">
+              <span class="stat-label">Overall Satisfaction</span>
+              <div class="stat-value text-emerald">
+                <span x-text="analytics?.satisfactionRate || '100.0'"></span>%
+              </div>
+              <span class="stat-sub">Positive Developer Rating</span>
+            </div>
+
+            <div class="analytics-stat-card card-glass">
+              <span class="stat-label">Total Votes Recorded</span>
+              <div class="stat-value text-cyan" x-text="analytics?.totalVotes || 0"></div>
+              <span class="stat-sub">👍 <span x-text="analytics?.totalUpvotes || 0"></span> | 👎 <span x-text="analytics?.totalDownvotes || 0"></span></span>
+            </div>
+          </div>
+
+          <!-- Rating Ratio Progress Bar -->
+          <div class="rating-progress-box">
+            <div class="progress-labels">
+              <span>Upvotes (<span x-text="analytics?.totalUpvotes"></span>)</span>
+              <span>Downvotes (<span x-text="analytics?.totalDownvotes"></span>)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" :style="'width: ' + (analytics?.satisfactionRate || 100) + '%'"></div>
+            </div>
+          </div>
+
+          <!-- Top Rated Articles List -->
+          <div class="top-articles-section">
+            <h3>🔥 Top 3 Highest Rated Articles</h3>
+            <div class="top-articles-list">
+              <template x-for="(art, idx) in (analytics?.topArticles || [])" :key="art.id">
+                <div class="top-article-item card-glass">
+                  <div class="top-article-rank" x-text="'#' + (idx + 1)"></div>
+                  <div class="top-article-info">
+                    <h4 x-text="art.question"></h4>
+                    <span class="cat-chip" x-text="art.category"></span>
+                  </div>
+                  <div class="top-article-score">
+                    👍 <span x-text="art.upvotes"></span>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" @click="showAnalyticsModal = false">Close Analytics</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="app-footer">
       <p>NexusCloud Enterprise AI Platform &bull; Alpine.js Interactive Knowledge Base &bull; Build 47</p>
@@ -445,6 +522,8 @@
         showSuggestions: false,
         tickets: [],
         showTicketDrawer: false,
+        analytics: null,
+        showAnalyticsModal: false,
         copiedFaqId: null,
         loading: false,
         showModal: false,
@@ -474,6 +553,16 @@
               this.showSuggestions = false;
             }
           });
+        },
+
+        openAnalyticsModal() {
+          this.showAnalyticsModal = true;
+          fetch('/api/analytics/feedback')
+            .then(res => res.json())
+            .then(data => {
+              this.analytics = data.analytics || null;
+            })
+            .catch(err => console.error('Failed to load analytics', err));
         },
 
         fetchTickets() {

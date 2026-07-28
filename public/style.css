@@ -1123,6 +1123,125 @@ body {
   to { transform: translateX(0); }
 }
 
+/* Feedback Analytics Modal Styles */
+.analytics-modal-panel {
+  max-width: 620px;
+}
+
+.analytics-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.analytics-stat-card {
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 6px 0;
+}
+
+.text-emerald { color: #34d399; }
+.text-cyan { color: #38bdf8; }
+
+.stat-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.rating-progress-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 10px;
+  background: rgba(239, 68, 68, 0.2);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  border-radius: 5px;
+  transition: width 0.4s ease;
+}
+
+.top-articles-section h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.top-articles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.top-article-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.top-article-rank {
+  font-weight: 800;
+  font-size: 14px;
+  color: #f59e0b;
+}
+
+.top-article-info {
+  flex: 1;
+}
+
+.top-article-info h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.top-article-score {
+  font-size: 13px;
+  font-weight: 700;
+  color: #34d399;
+}
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 

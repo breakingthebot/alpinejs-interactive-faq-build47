@@ -8,6 +8,7 @@ import {
   getFaqsByIds,
   getCodeSnippet,
   getSearchSuggestions,
+  getFeedbackAnalytics,
   exportFaqsAsMarkdown,
   getFaqById,
   voteFaqHelpful,
@@ -28,6 +29,14 @@ describe('faqService', () => {
     expect(faqs.length).toBe(6);
     expect(faqs[0].popularityScore).toBeGreaterThanOrEqual(faqs[1].popularityScore);
     expect(faqs[0].question).toContain('rate limiting');
+  });
+
+  it('calculates aggregate feedback analytics and satisfaction rate', () => {
+    const analytics = getFeedbackAnalytics();
+    expect(analytics.totalVotes).toBeGreaterThan(0);
+    expect(analytics.satisfactionRate).toBeGreaterThan(90);
+    expect(analytics.topArticles.length).toBe(3);
+    expect(analytics.topArticles[0].upvotes).toBeGreaterThanOrEqual(analytics.topArticles[1].upvotes);
   });
 
   it('retrieves seeded support tickets with SLA statuses', () => {

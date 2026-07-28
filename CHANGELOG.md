@@ -5,6 +5,14 @@ All notable changes to **Build 47 (NexusCloud Alpine.js Interactive Knowledge Ba
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-07-27
+
+### Added
+- Integrated **FAQ Article Feedback Analytics & Rating Heatmap** in `faqService.js` and `public/index.html`.
+- Added feedback analytics domain function (`getFeedbackAnalytics`), Express API route `GET /api/analytics/feedback`, and satisfaction rating percentage dial.
+- Updated `public/index.html` and `public/style.css` with **📊 Feedback Analytics Heatmap** dropdown menu trigger, analytics modal dialog (`showAnalyticsModal`), rating progress bar, and top 3 rated articles list.
+- Added unit tests in `faqService.spec.js` (18 total unit tests passing).
+
 ## [0.6.0] - 2026-07-27
 
 ### Added

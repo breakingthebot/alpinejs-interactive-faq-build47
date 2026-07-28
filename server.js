@@ -9,6 +9,7 @@ import {
   getAllFaqs,
   getFaqsByIds,
   getSearchSuggestions,
+  getFeedbackAnalytics,
   exportFaqsAsMarkdown,
   getFaqById,
   voteFaqHelpful,
@@ -29,6 +30,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
+
+// GET /api/analytics/feedback - Article Upvote & Satisfaction Analytics
+app.get('/api/analytics/feedback', (req, res) => {
+  const analytics = getFeedbackAnalytics();
+  res.json({ success: true, analytics });
+});
 
 // GET /api/tickets - Get List of Submitted Support Tickets & SLA Statuses
 app.get('/api/tickets', (req, res) => {
