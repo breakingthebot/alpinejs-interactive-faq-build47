@@ -5,6 +5,14 @@ All notable changes to **Build 47 (NexusCloud Alpine.js Interactive Knowledge Ba
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-07-28
+
+### Added
+- Integrated **FAQ Real-Time View Count & Trending Badges** in `faqService.js` and `public/index.html`.
+- Added view increment domain helper (`incrementFaqViews`), trending status evaluator (`isFaqTrending`), and Express API route `POST /api/faqs/:id/view`.
+- Updated `public/index.html` and `public/style.css` adding `🔥 Trending` badge chips with orange pulse glow animation (`.chip-trending`), `👁️ <count> views` badge in FAQ card footer, and automated view increments upon expanding accordion articles.
+- Added unit tests in `faqService.spec.js` (33 total unit tests passing).
+
 ## [1.4.0] - 2026-07-28
 
 ### Added

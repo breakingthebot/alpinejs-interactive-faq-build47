@@ -9,6 +9,8 @@ import {
   getCodeSnippet,
   getSearchSuggestions,
   getFeedbackAnalytics,
+  incrementFaqViews,
+  isFaqTrending,
   exportFaqsAsCsv,
   exportFaqsAsJson,
   getQuizQuestions,
@@ -38,6 +40,25 @@ describe('faqService', () => {
     expect(faqs.length).toBe(6);
     expect(faqs[0].popularityScore).toBeGreaterThanOrEqual(faqs[1].popularityScore);
     expect(faqs[0].question).toContain('rate limiting');
+  });
+
+  it('increments FAQ article view count dynamically', () => {
+    const initialViews = getFaqById('faq_1').views;
+    const result = incrementFaqViews('faq_1');
+    expect(result.views).toBe(initialViews + 1);
+    expect(result.isTrending).toBe(true);
+  });
+
+  it('throws error when incrementing views for invalid FAQ ID', () => {
+    expect(() => incrementFaqViews('invalid_id')).toThrow('FAQ item with ID invalid_id not found');
+  });
+
+  it('evaluates whether an FAQ item is trending based on views or upvotes', () => {
+    const faq1 = getFaqById('faq_1');
+    expect(isFaqTrending(faq1)).toBe(true);
+
+    const faq6 = getFaqById('faq_6');
+    expect(isFaqTrending(faq6)).toBe(false);
   });
 
   it('exports filtered FAQs as CSV spreadsheet format', () => {

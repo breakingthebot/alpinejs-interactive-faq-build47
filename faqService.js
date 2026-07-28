@@ -18,6 +18,7 @@
  * @property {number} popularityScore
  * @property {number} upvotes
  * @property {number} downvotes
+ * @property {number} views
  * @property {string[]} tags
  * @property {string} lastUpdated
  * @property {CodeSnippets} [codeSnippets]
@@ -49,6 +50,7 @@ const INITIAL_FAQS = [
     popularityScore: 98,
     upvotes: 142,
     downvotes: 3,
+    views: 1240,
     tags: ['API', 'Rate Limit', 'Tokens', 'Quota'],
     lastUpdated: '2026-07-15',
     codeSnippets: {
@@ -65,6 +67,7 @@ const INITIAL_FAQS = [
     popularityScore: 95,
     upvotes: 128,
     downvotes: 1,
+    views: 980,
     tags: ['Security', 'Encryption', 'SOC2', 'KMS'],
     lastUpdated: '2026-07-18',
     codeSnippets: {
@@ -81,6 +84,7 @@ const INITIAL_FAQS = [
     popularityScore: 92,
     upvotes: 110,
     downvotes: 2,
+    views: 820,
     tags: ['SLA', 'Uptime', 'Guarantee', 'MSA'],
     lastUpdated: '2026-07-10'
   },
@@ -92,6 +96,7 @@ const INITIAL_FAQS = [
     popularityScore: 89,
     upvotes: 87,
     downvotes: 4,
+    views: 450,
     tags: ['Billing', 'Invoicing', 'Net-30', 'Finance'],
     lastUpdated: '2026-07-22'
   },
@@ -103,6 +108,7 @@ const INITIAL_FAQS = [
     popularityScore: 86,
     upvotes: 94,
     downvotes: 5,
+    views: 610,
     tags: ['Kubernetes', 'On-Premises', 'Air-Gapped', 'Helm'],
     lastUpdated: '2026-07-25',
     codeSnippets: {
@@ -119,6 +125,7 @@ const INITIAL_FAQS = [
     popularityScore: 84,
     upvotes: 76,
     downvotes: 2,
+    views: 390,
     tags: ['API Keys', 'Permissions', 'RBAC', 'Security'],
     lastUpdated: '2026-07-12',
     codeSnippets: {
@@ -197,10 +204,33 @@ export function getCategories() {
   ];
 }
 
+export function incrementFaqViews(id) {
+  const faq = getFaqById(id);
+  if (!faq) {
+    throw new Error(`FAQ item with ID ${id} not found`);
+  }
+
+  faq.views = (faq.views || 0) + 1;
+  faq.popularityScore += 1;
+  const isTrending = isFaqTrending(faq);
+
+  return {
+    id: faq.id,
+    views: faq.views,
+    popularityScore: faq.popularityScore,
+    isTrending
+  };
+}
+
+export function isFaqTrending(faq) {
+  if (!faq) return false;
+  return (faq.views || 0) >= 500 || (faq.upvotes || 0) >= 100;
+}
+
 export function exportFaqsAsCsv(searchQuery = '', categoryFilter = 'All', bookmarkedIds = []) {
   const targetFaqs = getAllFaqs(searchQuery, categoryFilter, 'popular', bookmarkedIds);
 
-  const headers = ['ID', 'Question', 'Category', 'PopularityScore', 'Upvotes', 'Downvotes', 'LastUpdated', 'Tags'];
+  const headers = ['ID', 'Question', 'Category', 'PopularityScore', 'Upvotes', 'Downvotes', 'Views', 'LastUpdated', 'Tags'];
   const rows = targetFaqs.map(f => [
     f.id,
     `"${f.question.replace(/"/g, '""')}"`,
@@ -208,6 +238,7 @@ export function exportFaqsAsCsv(searchQuery = '', categoryFilter = 'All', bookma
     f.popularityScore,
     f.upvotes,
     f.downvotes,
+    f.views || 0,
     f.lastUpdated,
     `"${f.tags.join(';')}"`
   ]);
@@ -382,7 +413,10 @@ export function getCodeSnippet(faqId, lang = 'curl') {
 }
 
 export function getAllFaqs(searchQuery = '', categoryFilter = 'All', sortBy = 'popular', bookmarkedIds = []) {
-  let result = [...faqsStore];
+  let result = faqsStore.map(f => ({
+    ...f,
+    isTrending: isFaqTrending(f)
+  }));
 
   if (categoryFilter === 'Bookmarked') {
     result = result.filter(f => bookmarkedIds.includes(f.id));
@@ -423,7 +457,7 @@ export function exportFaqsAsMarkdown(searchQuery = '', categoryFilter = 'All', b
 
   targetFaqs.forEach((f, idx) => {
     md += `### ${idx + 1}. ${f.question}\n`;
-    md += `- **Category**: \`${f.category}\` | **Popularity**: 🔥 ${f.popularityScore} | **Helpful Rating**: 👍 ${f.upvotes} / 👎 ${f.downvotes}\n`;
+    md += `- **Category**: \`${f.category}\` | **Popularity**: 🔥 ${f.popularityScore} | **Views**: 👁️ ${f.views || 0} | **Helpful Rating**: 👍 ${f.upvotes} / 👎 ${f.downvotes}\n`;
     md += `- **Last Verified**: ${f.lastUpdated}\n`;
     md += `- **Tags**: ${f.tags.map(t => `\`#${t}\``).join(', ')}\n\n`;
     md += `${f.answer}\n\n`;

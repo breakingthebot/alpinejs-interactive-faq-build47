@@ -270,8 +270,11 @@
                 @click="toggleFaq(faq.id)"
               >
                 <div class="faq-header-left">
-                  <span class="cat-chip" :class="'cat-chip-' + getCategorySlug(faq.category)" x-text="faq.category"></span>
-                  <h3 class="faq-question" x-text="faq.question"></h3>
+                  <span class="faq-category-badge" x-text="faq.category"></span>
+                  <template x-if="faq.isTrending">
+                    <span class="chip-trending" title="High traffic article with 500+ views">🔥 Trending</span>
+                  </template>
+                  <h3 class="faq-question-title" x-text="faq.question"></h3>
                 </div>
                 <div class="faq-header-right">
                   <span class="popularity-badge" title="Popularity Rating">
@@ -344,8 +347,9 @@
                 </div>
 
                 <div class="faq-footer">
-                  <div class="update-info">
-                    📅 Verified by Platform Security Team on <span x-text="faq.lastUpdated"></span>
+                  <div class="faq-meta">
+                    <span class="faq-views-badge" title="Article Total View Count">👁️ <span x-text="(faq.views || 0) + ' views'"></span></span>
+                    <span>Verified: <strong x-text="faq.lastUpdated"></strong></span>
                   </div>
 
                   <!-- Alpine Helpful Voting Buttons -->
@@ -1056,7 +1060,24 @@
         },
 
         toggleFaq(id) {
-          this.openFaqId = this.openFaqId === id ? null : id;
+          if (this.expandedFaqs.includes(id)) {
+            this.expandedFaqs = this.expandedFaqs.filter(item => item !== id);
+          } else {
+            this.expandedFaqs.push(id);
+            fetch(`/api/faqs/${id}/view`, { method: 'POST' })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success && data.viewData) {
+                  const faq = this.faqs.find(f => f.id === id);
+                  if (faq) {
+                    faq.views = data.viewData.views;
+                    faq.popularityScore = data.viewData.popularityScore;
+                    faq.isTrending = data.viewData.isTrending;
+                  }
+                }
+              })
+              .catch(err => console.error('Failed to increment view count', err));
+          }
         },
 
         toggleBookmark(id) {

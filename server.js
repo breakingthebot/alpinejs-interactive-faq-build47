@@ -135,6 +135,16 @@ app.post('/api/faqs/:id/vote', (req, res) => {
   }
 });
 
+// POST /api/faqs/:id/view - Record article expansion view count
+app.post('/api/faqs/:id/view', (req, res) => {
+  try {
+    const viewData = incrementFaqViews(req.params.id);
+    return res.json({ success: true, viewData });
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+  }
+});
+
 // POST /api/tickets - Submit new enterprise support ticket
 app.post('/api/tickets', (req, res) => {
   try {
