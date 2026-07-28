@@ -5,6 +5,14 @@ All notable changes to **Build 47 (NexusCloud Alpine.js Interactive Knowledge Ba
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-27
+
+### Added
+- Integrated **FAQ Support SLA Escalation Trigger & P1 Alerting** in `faqService.js` and `public/index.html`.
+- Added ticket P1 escalation domain helper (`escalateTicketP1`) and Express API route `POST /api/tickets/:id/escalate`.
+- Updated `public/index.html` and `public/style.css` with **🚨 Escalate to P1 Urgent** action button inside the support tickets drawer, **🚨 Active P1 Escalation Alert Banner**, critical SLA badges (`🚨 P1 Escalated (5m Response SLA)`), and pulse glow styles.
+- Added unit tests in `faqService.spec.js` (26 total unit tests passing).
+
 ## [1.1.0] - 2026-07-27
 
 ### Added

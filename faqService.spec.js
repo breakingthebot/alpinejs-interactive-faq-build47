@@ -9,6 +9,7 @@ import {
   getCodeSnippet,
   getSearchSuggestions,
   getFeedbackAnalytics,
+  escalateTicketP1,
   getKeyboardShortcuts,
   getShareableLink,
   createFilterPreset,
@@ -33,6 +34,17 @@ describe('faqService', () => {
     expect(faqs.length).toBe(6);
     expect(faqs[0].popularityScore).toBeGreaterThanOrEqual(faqs[1].popularityScore);
     expect(faqs[0].question).toContain('rate limiting');
+  });
+
+  it('escalates support ticket to P1 Critical priority successfully', () => {
+    const escalated = escalateTicketP1('tkt_178201_a9b1', 'KMS Key Rotation Failover Outage');
+    expect(escalated.priority).toBe('Critical');
+    expect(escalated.isP1Escalated).toBe(true);
+    expect(escalated.slaStatus).toContain('P1 Escalated');
+  });
+
+  it('throws error when escalating non-existent ticket ID', () => {
+    expect(() => escalateTicketP1('invalid_tkt')).toThrow('Ticket with ID invalid_tkt not found');
   });
 
   it('retrieves keyboard shortcuts registry list', () => {

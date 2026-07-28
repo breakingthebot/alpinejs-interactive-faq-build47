@@ -462,17 +462,54 @@
             <div class="ticket-card">
               <div class="ticket-card-header">
                 <span class="ticket-id" x-text="tkt.id"></span>
-                <span class="sla-badge" :class="{ 'sla-active': tkt.slaStatus.includes('Active'), 'sla-met': tkt.slaStatus.includes('Met') }" x-text="tkt.slaStatus"></span>
-              </div>
-              <h4 class="ticket-subject" x-text="tkt.subject"></h4>
-              <p class="ticket-msg" x-text="tkt.message"></p>
-              <div class="ticket-meta">
-                <span class="priority-chip" :class="'priority-' + tkt.priority.toLowerCase()" x-text="tkt.priority + ' SLA'"></span>
-                <span class="ticket-cat" x-text="tkt.category"></span>
-                <span class="ticket-time" x-text="tkt.createdAt"></span>
+          <!-- Active P1 Escalation Alert Banner -->
+          <template x-if="tickets.some(t => t.isP1Escalated || t.priority === 'Critical')">
+            <div class="p1-alert-banner">
+              <span class="p1-icon">🚨</span>
+              <div>
+                <strong>P1 Critical Outage Escalation Active</strong>
+                <p>On-call SRE & Engineering teams dispatched with 5-minute response SLA.</p>
               </div>
             </div>
           </template>
+
+          <div class="tickets-list" x-show="tickets.length > 0">
+            <template x-for="t in tickets" :key="t.id">
+              <div class="ticket-card" :class="{ 'p1-ticket-card': t.isP1Escalated || t.priority === 'Critical' }">
+                <div class="ticket-header">
+                  <span 
+                    class="ticket-chip" 
+                    :class="{
+                      'priority-critical': t.priority === 'Critical',
+                      'priority-high': t.priority === 'High',
+                      'priority-med': t.priority === 'Medium',
+                      'priority-low': t.priority === 'Low'
+                    }"
+                    x-text="t.priority + ' Priority'"
+                  ></span>
+                  <span class="ticket-status" x-text="t.status"></span>
+                </div>
+                <h4 class="ticket-subject" x-text="t.subject"></h4>
+                <p class="ticket-msg" x-text="t.message"></p>
+                <div class="ticket-footer">
+                  <span class="ticket-sla" x-text="t.slaStatus"></span>
+                  <span class="ticket-date" x-text="t.createdAt"></span>
+                </div>
+
+                <!-- P1 Escalation Button -->
+                <div class="ticket-actions" x-show="!t.isP1Escalated && t.priority !== 'Critical'">
+                  <button 
+                    type="button" 
+                    class="btn-escalate-p1" 
+                    @click="escalateTicket(t)"
+                    title="Escalate ticket to P1 Critical priority for 5-minute SRE dispatch"
+                  >
+                    🚨 Escalate to P1 Urgent
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
         </div>
       </div>
     </div>
@@ -774,6 +811,25 @@
           this.showToast('Removed search preset.', 'success');
         },
 
+        escalateTicket(ticket) {
+          const reason = prompt('Enter Escalation Reason / Incident Details:', 'Critical production outage risk affecting API response latency.');
+          if (!reason || !reason.trim()) return;
+
+          fetch(`/api/tickets/${ticket.id}/escalate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason: reason.trim() })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              this.fetchTickets();
+              this.showToast(`🚨 Ticket ${ticket.id} Escalated to P1 Critical SLA! SRE Dispatched.`, 'danger');
+            } else {
+              this.showToast(data.error || 'Failed to escalate ticket', 'danger');
+            }
+          })
+          .catch(() => this.showToast('Server connection error during P1 escalation', 'danger'));
         openAnalyticsModal() {
           this.showAnalyticsModal = true;
           fetch('/api/analytics/feedback')

@@ -35,6 +35,8 @@
  * @property {string} createdAt
  * @property {string} slaStatus
  * @property {string} status
+ * @property {boolean} [isP1Escalated]
+ * @property {string} [escalationReason]
  */
 
 /** @type {FaqItem[]} */
@@ -139,7 +141,8 @@ const INITIAL_TICKETS = [
     message: 'Need verification on Nitro Enclave memory limits during fine-tuning job.',
     createdAt: '2026-07-27 18:40',
     status: 'In Progress',
-    slaStatus: '🟢 SLA Active (12m remaining)'
+    slaStatus: '🟢 SLA Active (12m remaining)',
+    isP1Escalated: false
   },
   {
     id: 'tkt_178105_c3d8',
@@ -151,7 +154,8 @@ const INITIAL_TICKETS = [
     message: 'Air-gapped deployment image registry credentials request.',
     createdAt: '2026-07-26 14:15',
     status: 'Resolved',
-    slaStatus: '✅ SLA Met (Responded in 8m)'
+    slaStatus: '✅ SLA Met (Responded in 8m)',
+    isP1Escalated: false
   }
 ];
 
@@ -167,6 +171,21 @@ export function getCategories() {
     'Billing & Invoicing',
     'Model Deployment'
   ];
+}
+
+export function escalateTicketP1(ticketId, reason = 'Critical Production Outage Risk') {
+  const ticket = ticketsStore.find(t => t.id === ticketId);
+  if (!ticket) {
+    throw new Error(`Ticket with ID ${ticketId} not found`);
+  }
+
+  ticket.priority = 'Critical';
+  ticket.isP1Escalated = true;
+  ticket.escalationReason = reason;
+  ticket.slaStatus = '🚨 P1 Escalated (5m Response SLA)';
+  ticket.status = 'P1 Escalated';
+
+  return ticket;
 }
 
 export function getKeyboardShortcuts() {
@@ -376,6 +395,8 @@ export function submitSupportTicket(data) {
     throw new Error('Support details message is required');
   }
 
+  const isCritical = data.priority === 'Critical';
+
   const newTicket = {
     id: `tkt_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
     name: data.name.trim(),
@@ -385,8 +406,9 @@ export function submitSupportTicket(data) {
     category: data.category || 'General Inquiry',
     message: data.message.trim(),
     createdAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
-    status: 'In Progress',
-    slaStatus: '🟢 SLA Active (15m SLA)'
+    status: isCritical ? 'P1 Escalated' : 'In Progress',
+    slaStatus: isCritical ? '🚨 P1 Escalated (5m Response SLA)' : '🟢 SLA Active (15m SLA)',
+    isP1Escalated: isCritical
   };
 
   ticketsStore.unshift(newTicket);

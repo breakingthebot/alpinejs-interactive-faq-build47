@@ -117,13 +117,24 @@ app.post('/api/faqs/:id/vote', (req, res) => {
   }
 });
 
-// POST /api/tickets - Submit Support Ticket
+// POST /api/tickets - Submit new enterprise support ticket
 app.post('/api/tickets', (req, res) => {
   try {
-    const ticket = submitSupportTicket(req.body);
-    res.json({ success: true, ticket });
-  } catch (err) {
-    res.status(400).json({ success: false, error: err.message });
+    const newTicket = submitSupportTicket(req.body);
+    return res.status(201).json({ success: true, ticket: newTicket });
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// POST /api/tickets/:id/escalate - Escalate ticket to P1 Critical SLA
+app.post('/api/tickets/:id/escalate', (req, res) => {
+  try {
+    const { reason } = req.body || {};
+    const escalatedTicket = escalateTicketP1(req.params.id, reason);
+    return res.json({ success: true, ticket: escalatedTicket });
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
   }
 });
 
