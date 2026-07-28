@@ -5,6 +5,14 @@ All notable changes to **Build 47 (NexusCloud Alpine.js Interactive Knowledge Ba
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-07-27
+
+### Added
+- Integrated **AI-Powered Instant Question Auto-Suggest & Semantic Search** in `faqService.js` and `public/index.html`.
+- Added search auto-suggest domain function (`getSearchSuggestions`), `GET /api/faqs/suggest` Express API route, and instant auto-completion dropdown panel.
+- Updated `public/index.html` and `public/style.css` with Alpine `$watch('searchQuery')` debounced triggers, suggestion selection handlers, and dark glassmorphism dropdown styling.
+- Added unit tests in `faqService.spec.js` (16 total unit tests passing).
+
 ## [0.4.0] - 2026-07-27
 
 ### Added

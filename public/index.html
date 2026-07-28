@@ -77,23 +77,44 @@
         <h1 class="hero-title">How can we empower your AI engineering team today?</h1>
         <p class="hero-subtitle">Search enterprise documentation, security compliance standards, API rate limit tiers, and deployment guides.</p>
 
-        <!-- Alpine Live Search Bar -->
-        <div class="search-box-wrapper">
+        <!-- Alpine Live Search Bar with Auto-Suggestions Dropdown -->
+        <div class="search-box-wrapper" @click.outside="showSuggestions = false">
           <span class="search-box-icon">🔍</span>
           <input 
             type="text" 
             class="search-box-input" 
             placeholder="Search questions (e.g. rate limits, SOC2 encryption, Kubernetes, SLA)..."
             x-model.debounce.200ms="searchQuery"
+            @focus="if(searchQuery.length >= 2) fetchSuggestions()"
           />
           <button 
             type="button" 
             class="btn-clear-search" 
             x-show="searchQuery.length > 0" 
-            @click="searchQuery = ''"
+            @click="searchQuery = ''; suggestions = []; showSuggestions = false"
           >
             &times;
           </button>
+
+          <!-- Auto-Suggest Dropdown Panel -->
+          <div class="suggestions-dropdown" x-show="showSuggestions && suggestions.length > 0" x-transition>
+            <div class="suggestions-header">
+              <span>💡 Instant Question & Tag Matches:</span>
+            </div>
+            <template x-for="item in suggestions" :key="item.id">
+              <button 
+                type="button" 
+                class="suggestion-item" 
+                @click="selectSuggestion(item)"
+              >
+                <div class="suggestion-item-left">
+                  <span class="suggestion-type-icon" x-text="item.type === 'tag' ? '🏷️' : '📄'"></span>
+                  <span class="suggestion-text" x-text="item.text"></span>
+                </div>
+                <span class="suggestion-category" x-text="item.category"></span>
+              </button>
+            </template>
+          </div>
         </div>
       </div>
     </section>
@@ -361,6 +382,8 @@
         openFaqId: 'faq_1', // Open first accordion by default
         bookmarkedIds: JSON.parse(localStorage.getItem('nexus_faq_bookmarks') || '[]'),
         userVotes: {}, // Track voted items { faq_1: 'up' }
+        suggestions: [],
+        showSuggestions: false,
         copiedFaqId: null,
         loading: false,
         showModal: false,
@@ -379,10 +402,33 @@
           this.fetchCategories();
           this.fetchFaqs();
 
-          // Watch search query changes
-          this.$watch('searchQuery', () => {
+          // Watch search query changes for auto-suggestions & filtering
+          this.$watch('searchQuery', (val) => {
             this.fetchFaqs();
+            if (val && val.trim().length >= 2) {
+              this.fetchSuggestions();
+            } else {
+              this.suggestions = [];
+              this.showSuggestions = false;
+            }
           });
+        },
+
+        fetchSuggestions() {
+          if (!this.searchQuery || this.searchQuery.trim().length < 2) return;
+          fetch('/api/faqs/suggest?q=' + encodeURIComponent(this.searchQuery))
+            .then(res => res.json())
+            .then(data => {
+              this.suggestions = data.suggestions || [];
+              this.showSuggestions = this.suggestions.length > 0;
+            })
+            .catch(err => console.error('Failed to load search suggestions', err));
+        },
+
+        selectSuggestion(item) {
+          this.searchQuery = item.type === 'tag' ? item.text.replace(/^#/, '') : item.text;
+          this.showSuggestions = false;
+          this.fetchFaqs();
         },
 
         fetchCategories() {

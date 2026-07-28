@@ -7,6 +7,7 @@ import {
   getAllFaqs,
   getFaqsByIds,
   getCodeSnippet,
+  getSearchSuggestions,
   exportFaqsAsMarkdown,
   getFaqById,
   voteFaqHelpful,
@@ -27,6 +28,12 @@ describe('faqService', () => {
     expect(faqs.length).toBe(6);
     expect(faqs[0].popularityScore).toBeGreaterThanOrEqual(faqs[1].popularityScore);
     expect(faqs[0].question).toContain('rate limiting');
+  });
+
+  it('generates real-time auto-suggest search completions', () => {
+    const suggestions = getSearchSuggestions('rate');
+    expect(suggestions.length).toBeGreaterThanOrEqual(1);
+    expect(suggestions[0].text).toContain('rate limiting');
   });
 
   it('retrieves SDK code snippets by language for specific FAQ item', () => {

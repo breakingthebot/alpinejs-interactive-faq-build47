@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import {
   getAllFaqs,
   getFaqsByIds,
+  getSearchSuggestions,
   exportFaqsAsMarkdown,
   getFaqById,
   voteFaqHelpful,
@@ -27,6 +28,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
+
+// GET /api/faqs/suggest - Real-Time Search Auto-Suggestions
+app.get('/api/faqs/suggest', (req, res) => {
+  const searchQuery = req.query.q || '';
+  const suggestions = getSearchSuggestions(searchQuery);
+  res.json({ suggestions });
+});
 
 // GET /api/faqs/export-markdown - Export FAQ Reference Cheat Sheet as Markdown File
 app.get('/api/faqs/export-markdown', (req, res) => {

@@ -140,6 +140,37 @@ export function getCategories() {
   ];
 }
 
+export function getSearchSuggestions(query = '') {
+  if (!query || !query.trim() || query.trim().length < 2) return [];
+
+  const q = query.toLowerCase().trim();
+  const suggestions = [];
+
+  faqsStore.forEach(f => {
+    if (f.question.toLowerCase().includes(q)) {
+      suggestions.push({
+        id: f.id,
+        text: f.question,
+        category: f.category,
+        type: 'question'
+      });
+    }
+
+    f.tags.forEach(tag => {
+      if (tag.toLowerCase().includes(q) && !suggestions.some(s => s.text === tag)) {
+        suggestions.push({
+          id: `tag_${tag}`,
+          text: `#${tag}`,
+          category: f.category,
+          type: 'tag'
+        });
+      }
+    });
+  });
+
+  return suggestions.slice(0, 5);
+}
+
 export function getCodeSnippet(faqId, lang = 'curl') {
   const faq = getFaqById(faqId);
   if (!faq || !faq.codeSnippets) return null;
@@ -156,7 +187,7 @@ export function getAllFaqs(searchQuery = '', categoryFilter = 'All', sortBy = 'p
   }
 
   if (searchQuery && searchQuery.trim()) {
-    const q = searchQuery.toLowerCase().trim();
+    const q = searchQuery.toLowerCase().trim().replace(/^#/, '');
     result = result.filter(f => 
       f.question.toLowerCase().includes(q) ||
       f.answer.toLowerCase().includes(q) ||
