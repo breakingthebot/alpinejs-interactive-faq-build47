@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexusCloud Enterprise AI — Knowledge Base & FAQ Center</title>
+  <link rel="stylesheet" href="/style.css">
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Alpine.js 3.x CDN & Collapse Plugin -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-dark text-light" x-data="faqApp()" x-init="initData()">
+
+  <!-- Toast Notification Alert -->
+  <div class="toast-container" x-show="toast.visible" x-transition>
+    <div class="toast" :class="'toast-' + toast.type">
+      <span class="toast-icon" x-text="toast.type === 'success' ? '✅' : '⚠️'"></span>
+      <span x-text="toast.message"></span>
+      <button type="button" class="toast-close" @click="toast.visible = false">&times;</button>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Enterprise Navigation Header -->
+    <header class="navbar card-glass">
+      <div class="nav-brand">
+        <div class="logo-icon">⚡</div>
+        <div>
+          <span class="brand-title">NexusCloud</span>
+          <span class="brand-badge">ENTERPRISE AI</span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Alpine Dropdown: Quick Actions -->
+        <div class="dropdown-wrapper" x-data="{ open: false }" @click.outside="open = false">
+          <button type="button" class="btn-dropdown" @click="open = !open">
+            ⚙️ Platform Resources <span class="caret" :class="{ 'rotate': open }">▼</span>
+          </button>
+          <div class="dropdown-menu" x-show="open" x-transition>
+            <a href="#faqs" class="dropdown-item" @click="open = false">📚 Developer Knowledge Base</a>
+            <a href="#api" class="dropdown-item" @click="open = false">🔑 API Key Vault</a>
+            <a href="#status" class="dropdown-item" @click="open = false">🟢 Live Systems Status (99.99%)</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item" @click="open = false; openSupportModal()">💬 Submit Support Ticket</a>
+          </div>
+        </div>
+
+        <button type="button" class="btn-primary-glow" @click="openSupportModal()">
+          💬 Open Support Ticket
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Search Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <span class="hero-chip">🚀 HELP CENTER & KNOWLEDGE VAULT</span>
+        <h1 class="hero-title">How can we empower your AI engineering team today?</h1>
+        <p class="hero-subtitle">Search enterprise documentation, security compliance standards, API rate limit tiers, and deployment guides.</p>
+
+        <!-- Alpine Live Search Bar -->
+        <div class="search-box-wrapper">
+          <span class="search-box-icon">🔍</span>
+          <input 
+            type="text" 
+            class="search-box-input" 
+            placeholder="Search questions (e.g. rate limits, SOC2 encryption, Kubernetes, SLA)..."
+            x-model.debounce.200ms="searchQuery"
+          />
+          <button 
+            type="button" 
+            class="btn-clear-search" 
+            x-show="searchQuery.length > 0" 
+            @click="searchQuery = ''"
+          >
+            &times;
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main FAQ & Interactive Tools Area -->
+    <main class="main-layout">
+      <!-- Category Tabs & Custom Filter Toolbar -->
+      <div class="toolbar-card card-glass">
+        <!-- Alpine Category Tabs -->
+        <div class="tabs-container">
+          <template x-for="cat in categories" :key="cat">
+            <button 
+              type="button" 
+              class="tab-btn" 
+              :class="{ 'active': activeCategory === cat }"
+              @click="setCategory(cat)"
+            >
+              <span x-text="cat"></span>
+              <span class="tab-count" x-text="categoryStats[cat] || 0"></span>
+            </button>
+          </template>
+        </div>
+
+        <!-- Alpine Custom Sorting Dropdown -->
+        <div class="sort-dropdown-wrapper" x-data="{ sortOpen: false }" @click.outside="sortOpen = false">
+          <button type="button" class="btn-sort" @click="sortOpen = !sortOpen">
+            <span>Sort By: <strong x-text="getSortLabel(sortBy)"></strong></span>
+            <span class="caret" :class="{ 'rotate': sortOpen }">▼</span>
+          </button>
+          <div class="sort-menu" x-show="sortOpen" x-transition>
+            <button type="button" class="sort-item" :class="{ 'selected': sortBy === 'popular' }" @click="sortBy = 'popular'; sortOpen = false; fetchFaqs()">🔥 Most Popular</button>
+            <button type="button" class="sort-item" :class="{ 'selected': sortBy === 'recent' }" @click="sortBy = 'recent'; sortOpen = false; fetchFaqs()">⏱️ Most Recent</button>
+            <button type="button" class="sort-item" :class="{ 'selected': sortBy === 'upvotes' }" @click="sortBy = 'upvotes'; sortOpen = false; fetchFaqs()">👍 Highest Rated</button>
+            <button type="button" class="sort-item" :class="{ 'selected': sortBy === 'alpha' }" @click="sortBy = 'alpha'; sortOpen = false; fetchFaqs()">🔤 Alphabetical (A-Z)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Accordion List -->
+      <div class="accordion-container">
+        <!-- Loading State -->
+        <div class="loading-state" x-show="loading">
+          <span class="spinner"></span> Loading Knowledge Base Articles...
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state card-glass" x-show="!loading && faqs.length === 0">
+          <div class="empty-icon">🔍</div>
+          <h3>No matching FAQ articles found</h3>
+          <p>We couldn't find any questions matching your query "<span x-text="searchQuery"></span>" in category "<span x-text="activeCategory"></span>".</p>
+          <button type="button" class="btn-secondary" @click="searchQuery = ''; activeCategory = 'All'; fetchFaqs()">Clear Filters</button>
+        </div>
+
+        <!-- Alpine Accordion Repeat Items -->
+        <template x-for="faq in faqs" :key="faq.id">
+          <div class="faq-card card-glass" :class="{ 'expanded': openFaqId === faq.id }">
+            <!-- Accordion Header Button -->
+            <button 
+              type="button" 
+              class="faq-header" 
+              @click="toggleFaq(faq.id)"
+            >
+              <div class="faq-header-left">
+                <span class="cat-chip" :class="'cat-chip-' + getCategorySlug(faq.category)" x-text="faq.category"></span>
+                <h3 class="faq-question" x-text="faq.question"></h3>
+              </div>
+              <div class="faq-header-right">
+                <span class="popularity-badge" title="Popularity Rating">
+                  🔥 <span x-text="faq.popularityScore"></span>
+                </span>
+                <span class="accordion-icon" :class="{ 'rotate': openFaqId === faq.id }">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </span>
+              </div>
+            </button>
+
+            <!-- Accordion Content Body with Alpine x-collapse -->
+            <div class="faq-body" x-show="openFaqId === faq.id" x-collapse>
+              <div class="faq-content">
+                <p class="faq-answer" x-text="faq.answer"></p>
+
+                <!-- Tags List -->
+                <div class="tags-row">
+                  <span class="tags-label">Related Tags:</span>
+                  <template x-for="tag in faq.tags" :key="tag">
+                    <button type="button" class="tag-pill" @click="searchQuery = tag" x-text="'#' + tag"></button>
+                  </template>
+                </div>
+
+                <div class="faq-footer">
+                  <div class="update-info">
+                    📅 Verified by Platform Security Team on <span x-text="faq.lastUpdated"></span>
+                  </div>
+
+                  <!-- Alpine Helpful Voting Buttons -->
+                  <div class="voting-controls">
+                    <span class="voting-label">Was this answer helpful?</span>
+                    <button 
+                      type="button" 
+                      class="btn-vote btn-vote-up" 
+                      :class="{ 'voted': userVotes[faq.id] === 'up' }"
+                      @click="vote(faq.id, true)"
+                      :disabled="userVotes[faq.id] !== undefined"
+                    >
+                      👍 Helpful (<span x-text="faq.upvotes"></span>)
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn-vote btn-vote-down" 
+                      :class="{ 'voted': userVotes[faq.id] === 'down' }"
+                      @click="vote(faq.id, false)"
+                      :disabled="userVotes[faq.id] !== undefined"
+                    >
+                      👎 Not Helpful (<span x-text="faq.downvotes"></span>)
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </main>
+
+    <!-- Support Ticket Modal (Alpine x-show & transitions) -->
+    <div 
+      class="modal-backdrop" 
+      x-show="showModal" 
+      x-transition:enter="transition-fade-enter"
+      x-transition:leave="transition-fade-leave"
+      @keydown.escape.window="showModal = false"
+    >
+      <div 
+        class="modal-panel card-glass" 
+        @click.outside="showModal = false"
+        x-transition:enter="transition-modal-enter"
+        x-transition:leave="transition-modal-leave"
+      >
+        <div class="modal-header">
+          <div>
+            <h2>💬 Enterprise Support Ticket</h2>
+            <p class="modal-subtitle">Our 24/7 Enterprise Support team responds within 15 minutes.</p>
+          </div>
+          <button type="button" class="modal-close" @click="showModal = false">&times;</button>
+        </div>
+
+        <form @submit.prevent="submitTicket()" class="modal-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Your Full Name *</label>
+              <input type="text" class="form-input" x-model="ticketForm.name" placeholder="e.g. Jordan Miller" required />
+            </div>
+            <div class="form-group">
+              <label>Work Email Address *</label>
+              <input type="email" class="form-input" x-model="ticketForm.email" placeholder="jordan@enterprise.com" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Priority SLA Level *</label>
+              <select class="form-input" x-model="ticketForm.priority">
+                <option value="Low">Low - General Inquiry</option>
+                <option value="Medium">Medium - System Question</option>
+                <option value="High">High - Production Warning</option>
+                <option value="Critical">Critical - Production Outage (P1)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Target Category *</label>
+              <select class="form-input" x-model="ticketForm.category">
+                <option value="API & SDK Integration">API & SDK Integration</option>
+                <option value="Security & Data Privacy">Security & Data Privacy</option>
+                <option value="Enterprise SLA">Enterprise SLA</option>
+                <option value="Billing & Invoicing">Billing & Invoicing</option>
+                <option value="Model Deployment">Model Deployment</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Ticket Subject *</label>
+            <input type="text" class="form-input" x-model="ticketForm.subject" placeholder="e.g. Assistance configuring custom KMS Key ARN" required />
+          </div>
+
+          <div class="form-group">
+            <label>Detailed Issue Description *</label>
+            <textarea class="form-input form-textarea" rows="4" x-model="ticketForm.message" placeholder="Describe expected behavior, error codes, or architecture requirements..." required></textarea>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" @click="showModal = false">Cancel</button>
+            <button type="submit" class="btn-primary-glow" :disabled="submittingTicket">
+              <span x-show="!submittingTicket">⚡ Dispatch Support Ticket</span>
+              <span x-show="submittingTicket">Sending Ticket...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>NexusCloud Enterprise AI Platform &bull; Alpine.js Interactive Knowledge Base &bull; Build 47</p>
+    </footer>
+  </div>
+
+  <script>
+    function faqApp() {
+      return {
+        searchQuery: '',
+        activeCategory: 'All',
+        sortBy: 'popular',
+        categories: ['All', 'API & SDK Integration', 'Security & Data Privacy', 'Enterprise SLA', 'Billing & Invoicing', 'Model Deployment'],
+        categoryStats: {},
+        faqs: [],
+        openFaqId: 'faq_1', // Open first accordion by default
+        userVotes: {}, // Track voted items { faq_1: 'up' }
+        loading: false,
+        showModal: false,
+        submittingTicket: false,
+        toast: { visible: false, message: '', type: 'success' },
+        ticketForm: {
+          name: '',
+          email: '',
+          subject: '',
+          priority: 'Medium',
+          category: 'API & SDK Integration',
+          message: ''
+        },
+
+        initData() {
+          this.fetchCategories();
+          this.fetchFaqs();
+
+          // Watch search query changes
+          this.$watch('searchQuery', () => {
+            this.fetchFaqs();
+          });
+        },
+
+        fetchCategories() {
+          fetch('/api/categories')
+            .then(res => res.json())
+            .then(data => {
+              this.categories = data.categories || this.categories;
+              this.categoryStats = data.stats || {};
+            })
+            .catch(err => console.error('Failed to load categories', err));
+        },
+
+        fetchFaqs() {
+          this.loading = true;
+          const params = new URLSearchParams({
+            q: this.searchQuery,
+            category: this.activeCategory,
+            sort: this.sortBy
+          });
+
+          fetch('/api/faqs?' + params.toString())
+            .then(res => res.json())
+            .then(data => {
+              this.faqs = data.faqs || [];
+              this.loading = false;
+            })
+            .catch(err => {
+              this.loading = false;
+              console.error('Failed to load FAQs', err);
+            });
+        },
+
+        setCategory(cat) {
+          this.activeCategory = cat;
+          this.fetchFaqs();
+        },
+
+        toggleFaq(id) {
+          this.openFaqId = this.openFaqId === id ? null : id;
+        },
+
+        vote(id, isHelpful) {
+          if (this.userVotes[id]) return;
+
+          fetch('/api/faqs/' + id + '/vote', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ isHelpful })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              this.userVotes[id] = isHelpful ? 'up' : 'down';
+              const faq = this.faqs.find(f => f.id === id);
+              if (faq) {
+                faq.upvotes = data.vote.upvotes;
+                faq.downvotes = data.vote.downvotes;
+                faq.popularityScore = data.vote.popularityScore;
+              }
+              this.showToast(isHelpful ? 'Thank you for your helpful feedback!' : 'Thank you! We will improve this article.', 'success');
+            }
+          })
+          .catch(err => {
+            this.showToast('Failed to record vote: ' + err.message, 'error');
+          });
+        },
+
+        openSupportModal() {
+          this.showModal = true;
+        },
+
+        submitTicket() {
+          this.submittingTicket = true;
+          fetch('/api/tickets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.ticketForm)
+          })
+          .then(res => res.json())
+          .then(data => {
+            this.submittingTicket = false;
+            if (data.success) {
+              this.showModal = false;
+              this.showToast('⚡ Ticket #' + data.ticket.id + ' dispatched! Our SLA team is on it.', 'success');
+              this.ticketForm = { name: '', email: '', subject: '', priority: 'Medium', category: 'API & SDK Integration', message: '' };
+            } else {
+              this.showToast(data.error || 'Failed to submit ticket', 'error');
+            }
+          })
+          .catch(err => {
+            this.submittingTicket = false;
+            this.showToast('Failed to submit ticket: ' + err.message, 'error');
+          });
+        },
+
+        showToast(message, type = 'success') {
+          this.toast = { visible: true, message, type };
+          setTimeout(() => {
+            this.toast.visible = false;
+          }, 4000);
+        },
+
+        getSortLabel(key) {
+          const map = { popular: 'Most Popular', recent: 'Most Recent', upvotes: 'Highest Rated', alpha: 'Alphabetical' };
+          return map[key] || 'Most Popular';
+        },
+
+        getCategorySlug(cat) {
+          if (!cat) return 'general';
+          return cat.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        }
+      }
+    }
+  </script>
+</body>
+</html>
