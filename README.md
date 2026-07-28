@@ -1,4 +1,4 @@
-# ⚡ Build 47: NexusCloud Enterprise AI — Alpine.js Interactive FAQ Center
+# ⚡ Build 47: NexusCloud Enterprise AI — Alpine.js Interactive Knowledge Base
 
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Demo-000000?style=for-the-badge&logo=vercel)](https://alpinejs-interactive-faq-build47.vercel.app)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/breakingthebot/alpinejs-interactive-faq-build47)
@@ -9,46 +9,60 @@
 
 ## 🌟 Overview
 
-**NexusCloud Interactive Knowledge Base & FAQ Center** is a modern enterprise documentation portal built with **Alpine.js 3.x** and **Express.js**. Designed for real-world client performance, it delivers rich interactivity—expandable accordions, category tabs, custom dropdowns, live search filtering, helpfulness voting, and support ticket modals—with minimal JavaScript overhead.
+**NexusCloud Interactive Knowledge Base & FAQ Center** (Build 47) is a high-performance enterprise documentation portal engineered with **Alpine.js 3.x** and **Express.js**. Built as if for a production client needing minimal JavaScript overhead, it delivers complete interactive functionality—smooth expandable accordions, tabbed category filtering, custom dropdowns, real-time debounced auto-suggest search, SDK code vaults with copy buttons, ticket SLA tracking drawers, feedback analytics heatmaps, dark/light theme switching, and offline markdown cheat sheet exporters.
 
-### 🌐 Live Production Demo
+### 🌐 Production Deployment Links
 - **Live Vercel Application**: [https://alpinejs-interactive-faq-build47.vercel.app](https://alpinejs-interactive-faq-build47.vercel.app)
-- **GitHub Codebase**: [https://github.com/breakingthebot/alpinejs-interactive-faq-build47](https://github.com/breakingthebot/alpinejs-interactive-faq-build47)
+- **GitHub Repository**: [https://github.com/breakingthebot/alpinejs-interactive-faq-build47](https://github.com/breakingthebot/alpinejs-interactive-faq-build47)
 
 ---
 
-## 🔥 Key Features
+## 🎯 Topics Covered & Core Learning Objectives
 
-- **🚀 Minimal JS Framework Overhead**: Powered by **Alpine.js 3.x** declarative directives (`x-data`, `x-show`, `x-collapse`, `x-model`, `x-transition`).
-- **💾 Interactive Filter Preset Manager**: Save custom search queries and category filter combinations into one-click quick preset chips with local storage sync.
-- **🌙 Interactive Dark / Light Theme Customizer**: Single-click toggle between sleek dark glassmorphism and crisp enterprise light appearance modes with local storage persistence.
-- **📊 Article Feedback Analytics & Satisfaction Rating**: Real-time developer satisfaction rating dial (`97.4% Positive`), total upvotes vs downvotes progress bar, and top 3 rated articles ranking.
-- **🎟️ Enterprise Support Ticket Audit & SLA Tracker**: Slide-out drawer displaying active support tickets, SLA response countdown badges (`🟢 SLA Active`), priority chips, and timestamp history.
-- **💡 AI-Powered Instant Question Auto-Suggest**: Real-time debounced auto-completion dropdown panel matching question titles and tag suggestions as you type.
-- **💻 Interactive SDK Code Snippet Copy Vault**: Tabbed code block selector for cURL, Python SDK, and Node.js SDK with one-click clipboard copying (`📋 Copy Code` -> `✅ Copied!`).
-- **📥 FAQ Markdown Reference Guide Generator**: Single-click export of category-filtered FAQ articles as a formatted Markdown developer guide (`.md`).
-- **📌 Personal Saved Articles & Offline Bookmarking**: Pin and save favorite FAQ articles to local storage (`localStorage`) with quick-access navbar count chips and category filter tab.
-- **📂 Expandable FAQ Accordion**: Smooth collapse animations (`x-collapse`), tag badges, and last updated verifications.
-- **🏷️ Category Tabs & Stats**: Filter articles dynamically by category (*API & SDK Integration*, *Security & Data Privacy*, *Enterprise SLA*, *Billing & Invoicing*, *Model Deployment*).
-- **🔍 Real-Time Client Search & Sorting**: Live debounced search filtering by query keywords and tags, plus custom sorting dropdown (*Most Popular*, *Most Recent*, *Highest Rated*, *Alphabetical*).
-- **👍 Interactive Helpfulness Voting**: Upvote or downvote articles with instant feedback and toast alerts.
-- **💬 Enterprise Support Ticket Modal**: Accessible modal with ESC window listener, click-outside dismissal, priority SLA selector, and API ticket submission.
+- **Alpine.js Directives & Micro-Interactivity**:
+  - `x-data`, `x-init`, `$watch` reactive state management.
+  - Smooth accordion collapse animations via `@alpinejs/collapse` (`x-collapse`).
+  - Modal backdrops & slide-out drawers with transition animations (`x-transition`, `@click.outside`, `@keydown.escape.window`).
+  - Interactive tabbed SDK code snippet vault (cURL, Python SDK, Node.js SDK) with clipboard copying (`navigator.clipboard`).
+- **Real-Time Client & Server Interactions**:
+  - Express.js REST API controllers (`/api/faqs`, `/api/categories`, `/api/tickets`, `/api/analytics/feedback`, `/api/faqs/suggest`).
+  - Debounced search auto-suggestions (`x-model.debounce.200ms`).
+  - Markdown reference guide document exporter generating `.md` file attachments (`GET /api/faqs/export-markdown`).
+- **State Persistence & Theme Engine**:
+  - `localStorage` client-side bookmarking (`nexus_faq_bookmarks`) and filter preset saving (`nexus_presets`).
+  - Theme customizer supporting dark glassmorphism and crisp enterprise light mode (`nexus_theme`).
+- **Domain Logic & Automated Unit Testing**:
+  - Vitest test suite with 21 unit tests covering category statistics, search auto-suggestions, batch bookmarking, SLA tracking, feedback analytics, and filter preset validation.
 
 ---
 
-## 🛠️ Tech Stack
+## 🔥 Feature Highlights Across Iterations
 
-- **Frontend**: HTML5, Vanilla CSS3 (Dark Mode Glassmorphism, CSS Grid & Flexbox), Alpine.js 3.x + `@alpinejs/collapse`
+- **v0.1.0 — Core Alpine.js Accordion & Portal Foundation**: Expandable accordions with `x-collapse`, category tabs, search input, helpfulness voting, and support ticket modal.
+- **v0.2.0 — Personal Saved Articles & Offline Bookmarking**: Pin articles to `localStorage` with quick-access navbar count chips and `📌 Saved` category filter tab.
+- **v0.3.0 — FAQ Markdown Reference Guide Generator**: Single-click export of category-filtered FAQ articles as a formatted Markdown developer guide (`nexus_faq_cheatsheet.md`).
+- **v0.4.0 — Interactive SDK Code Snippet Copy Vault**: Tabbed code block selector for cURL, Python SDK, and Node.js SDK with one-click clipboard copying (`📋 Copy Code` -> `✅ Copied!`).
+- **v0.5.0 — AI-Powered Instant Question Auto-Suggest**: Real-time debounced auto-completion dropdown panel matching question titles and tag chips.
+- **v0.6.0 — Enterprise Support Ticket Audit & SLA Tracker**: Slide-out drawer displaying active support tickets, SLA response countdown badges (`🟢 SLA Active`), priority chips, and timestamp history.
+- **v0.7.0 — Article Feedback Analytics & Rating Heatmap**: Real-time developer satisfaction rating dial (`97.4% Positive`), total upvotes vs downvotes progress bar, and top 3 rated articles ranking.
+- **v0.8.0 — Dark / Light Theme Customizer**: Single-click toggle between dark glassmorphism and crisp enterprise light mode.
+- **v0.9.0 — Filter Preset Manager**: Save custom search queries and category filter combinations into one-click quick preset chips with local storage sync.
+
+---
+
+## 🛠️ Technology Stack
+
+- **Frontend**: HTML5, Vanilla CSS3 (Dark Glassmorphism & Light Mode, CSS Grid, Flexbox), Alpine.js 3.x + `@alpinejs/collapse`
 - **Backend Controller**: Node.js, Express.js REST API
-- **Testing**: Vitest (11 passing unit tests)
-- **Deployment**: Vercel Serverless Functions
+- **Unit Testing**: Vitest (21 unit tests passing 100%)
+- **Deployment**: Vercel Serverless Platform
 
 ---
 
-## 🚀 Local Installation & Run Guide
+## 🚀 Quick Start & Local Run
 
 ```bash
-# 1. Clone repository
+# 1. Clone repo
 git clone https://github.com/breakingthebot/alpinejs-interactive-faq-build47.git
 cd alpinejs-interactive-faq-build47
 
@@ -58,7 +72,7 @@ npm install
 # 3. Run unit tests
 npm test
 
-# 4. Start local dev server
+# 4. Start local development server
 npm start
-# Server running at http://localhost:3000
+# App running at http://localhost:3000
 ```
