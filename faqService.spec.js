@@ -9,6 +9,7 @@ import {
   getCodeSnippet,
   getSearchSuggestions,
   getFeedbackAnalytics,
+  validateTheme,
   exportFaqsAsMarkdown,
   getFaqById,
   voteFaqHelpful,
@@ -29,6 +30,12 @@ describe('faqService', () => {
     expect(faqs.length).toBe(6);
     expect(faqs[0].popularityScore).toBeGreaterThanOrEqual(faqs[1].popularityScore);
     expect(faqs[0].question).toContain('rate limiting');
+  });
+
+  it('validates custom UI theme names accurately', () => {
+    expect(validateTheme('light')).toBe('light');
+    expect(validateTheme('dark')).toBe('dark');
+    expect(validateTheme('invalid_theme')).toBe('dark');
   });
 
   it('calculates aggregate feedback analytics and satisfaction rate', () => {

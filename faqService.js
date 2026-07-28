@@ -169,6 +169,14 @@ export function getCategories() {
   ];
 }
 
+export function validateTheme(themeName) {
+  const allowed = ['dark', 'light'];
+  if (!allowed.includes(themeName)) {
+    return 'dark';
+  }
+  return themeName;
+}
+
 export function getFeedbackAnalytics() {
   let totalUpvotes = 0;
   let totalDownvotes = 0;

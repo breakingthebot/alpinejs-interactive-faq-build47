@@ -15,7 +15,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-dark text-light" x-data="faqApp()" x-init="initData()">
+<body class="bg-dark text-light" :class="{ 'theme-light': currentTheme === 'light' }" x-data="faqApp()" x-init="initData()">
 
   <!-- Toast Notification Alert -->
   <div class="toast-container" x-show="toast.visible" x-transition>
@@ -38,6 +38,16 @@
       </div>
 
       <div class="nav-actions">
+        <!-- Theme Switcher Toggle Button -->
+        <button 
+          type="button" 
+          class="btn-theme-toggle" 
+          @click="toggleTheme()"
+          :title="currentTheme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'"
+        >
+          <span x-text="currentTheme === 'dark' ? '☀️ Light' : '🌙 Dark'"></span>
+        </button>
+
         <!-- Quick Tickets Drawer Button -->
         <button 
           type="button" 
@@ -512,6 +522,7 @@
         searchQuery: '',
         activeCategory: 'All',
         sortBy: 'popular',
+        currentTheme: localStorage.getItem('nexus_theme') || 'dark',
         categories: ['All', 'Bookmarked', 'API & SDK Integration', 'Security & Data Privacy', 'Enterprise SLA', 'Billing & Invoicing', 'Model Deployment'],
         categoryStats: {},
         faqs: [],
@@ -553,6 +564,12 @@
               this.showSuggestions = false;
             }
           });
+        },
+
+        toggleTheme() {
+          this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+          localStorage.setItem('nexus_theme', this.currentTheme);
+          this.showToast(this.currentTheme === 'light' ? '☀️ Switched to Crisp Enterprise Light Theme' : '🌙 Switched to Dark Glassmorphism Theme', 'success');
         },
 
         openAnalyticsModal() {

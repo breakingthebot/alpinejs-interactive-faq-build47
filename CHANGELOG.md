@@ -5,6 +5,14 @@ All notable changes to **Build 47 (NexusCloud Alpine.js Interactive Knowledge Ba
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-07-27
+
+### Added
+- Integrated **Interactive FAQ Dark / Light Theme Customizer** in `faqService.js` and `public/index.html`.
+- Added theme validation domain helper (`validateTheme`), Alpine dynamic theme binding (`:class="{ 'theme-light': currentTheme === 'light' }"`), and `localStorage` preference sync (`nexus_theme`).
+- Updated `public/index.html` and `public/style.css` with **🌙 Dark / ☀️ Light Theme Switcher** navbar button and crisp enterprise light mode CSS palette rules.
+- Added unit tests in `faqService.spec.js` (19 total unit tests passing).
+
 ## [0.7.0] - 2026-07-27
 
 ### Added
