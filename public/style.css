@@ -347,6 +347,36 @@ body {
   border-radius: 10px;
 }
 
+/* Toolbar Right Actions */
+.toolbar-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-export-md {
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-export-md:hover {
+  background: rgba(139, 92, 246, 0.25);
+  color: #ffffff;
+  transform: scale(1.02);
+}
+
 /* Sorting Dropdown */
 .sort-dropdown-wrapper {
   position: relative;

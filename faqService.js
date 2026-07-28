@@ -144,6 +144,26 @@ export function getAllFaqs(searchQuery = '', categoryFilter = 'All', sortBy = 'p
   return result;
 }
 
+export function exportFaqsAsMarkdown(searchQuery = '', categoryFilter = 'All', bookmarkedIds = []) {
+  const targetFaqs = getAllFaqs(searchQuery, categoryFilter, 'popular', bookmarkedIds);
+
+  let md = `# ⚡ NexusCloud Enterprise AI — Developer Knowledge Base Reference Guide\n`;
+  md += `> Generated on: ${new Date().toISOString().replace('T', ' ').substring(0, 16)} UTC\n`;
+  md += `> Filter Category: **${categoryFilter}** | Total Articles: **${targetFaqs.length}**\n\n`;
+  md += `---\n\n`;
+
+  targetFaqs.forEach((f, idx) => {
+    md += `### ${idx + 1}. ${f.question}\n`;
+    md += `- **Category**: \`${f.category}\` | **Popularity**: 🔥 ${f.popularityScore} | **Helpful Rating**: 👍 ${f.upvotes} / 👎 ${f.downvotes}\n`;
+    md += `- **Last Verified**: ${f.lastUpdated}\n`;
+    md += `- **Tags**: ${f.tags.map(t => `\`#${t}\``).join(', ')}\n\n`;
+    md += `${f.answer}\n\n`;
+    md += `---\n\n`;
+  });
+
+  return md;
+}
+
 export function getFaqsByIds(ids = []) {
   if (!Array.isArray(ids) || ids.length === 0) return [];
   return faqsStore.filter(f => ids.includes(f.id));

@@ -117,17 +117,29 @@
           </template>
         </div>
 
-        <!-- Alpine Custom Sorting Dropdown -->
-        <div class="sort-dropdown-wrapper" x-data="{ sortOpen: false }" @click.outside="sortOpen = false">
-          <button type="button" class="btn-sort" @click="sortOpen = !sortOpen">
-            <span>Sort By: <strong x-text="getSortLabel(sortBy)"></strong></span>
-            <span class="caret" :class="{ 'rotate': sortOpen }">▼</span>
-          </button>
-          <div class="sort-menu" x-show="sortOpen" x-transition>
-            <button type="button" class="sort-item" :class="{ 'selected': sortBy === 'popular' }" @click="sortBy = 'popular'; sortOpen = false; fetchFaqs()">🔥 Most Popular</button>
-            <button type="button" class="sort-item" :class="{ 'selected': sortBy === 'recent' }" @click="sortBy = 'recent'; sortOpen = false; fetchFaqs()">⏱️ Most Recent</button>
-            <button type="button" class="sort-item" :class="{ 'selected': sortBy === 'upvotes' }" @click="sortBy = 'upvotes'; sortOpen = false; fetchFaqs()">👍 Highest Rated</button>
-            <button type="button" class="sort-item" :class="{ 'selected': sortBy === 'alpha' }" @click="sortBy = 'alpha'; sortOpen = false; fetchFaqs()">🔤 Alphabetical (A-Z)</button>
+        <!-- Export Markdown Reference Button & Custom Sorting Dropdown -->
+        <div class="toolbar-right-actions">
+          <a 
+            :href="'/api/faqs/export-markdown?category=' + activeCategory + '&q=' + searchQuery + '&bookmarkedIds=' + bookmarkedIds.join(',')" 
+            class="btn-export-md" 
+            download 
+            title="Download Category FAQs as Markdown Developer Guide (.md)"
+          >
+            📥 Export Markdown Guide
+          </a>
+
+          <!-- Alpine Custom Sorting Dropdown -->
+          <div class="sort-dropdown-wrapper" x-data="{ sortOpen: false }" @click.outside="sortOpen = false">
+            <button type="button" class="btn-sort" @click="sortOpen = !sortOpen">
+              <span>Sort By: <strong x-text="getSortLabel(sortBy)"></strong></span>
+              <span class="caret" :class="{ 'rotate': sortOpen }">▼</span>
+            </button>
+            <div class="sort-menu" x-show="sortOpen" x-transition>
+              <button type="button" class="sort-item" :class="{ 'selected': sortBy === 'popular' }" @click="sortBy = 'popular'; sortOpen = false; fetchFaqs()">🔥 Most Popular</button>
+              <button type="button" class="sort-item" :class="{ 'selected': sortBy === 'recent' }" @click="sortBy = 'recent'; sortOpen = false; fetchFaqs()">⏱️ Most Recent</button>
+              <button type="button" class="sort-item" :class="{ 'selected': sortBy === 'upvotes' }" @click="sortBy = 'upvotes'; sortOpen = false; fetchFaqs()">👍 Highest Rated</button>
+              <button type="button" class="sort-item" :class="{ 'selected': sortBy === 'alpha' }" @click="sortBy = 'alpha'; sortOpen = false; fetchFaqs()">🔤 Alphabetical (A-Z)</button>
+            </div>
           </div>
         </div>
       </div>

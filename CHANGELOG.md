@@ -5,6 +5,14 @@ All notable changes to **Build 47 (NexusCloud Alpine.js Interactive Knowledge Ba
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-07-27
+
+### Added
+- Integrated **FAQ PDF / Markdown Developer Cheat Sheet Generator** in `faqService.js` and `server.js`.
+- Added Markdown document generator (`exportFaqsAsMarkdown`), Express endpoint (`GET /api/faqs/export-markdown`), and `nexus_faq_cheatsheet.md` download attachment response headers.
+- Updated `public/index.html` and `public/style.css` with **📥 Export Markdown Guide** button in main toolbar.
+- Added unit tests in `faqService.spec.js` (14 total unit tests passing).
+
 ## [0.2.0] - 2026-07-27
 
 ### Added

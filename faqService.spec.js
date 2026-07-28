@@ -6,6 +6,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import {
   getAllFaqs,
   getFaqsByIds,
+  exportFaqsAsMarkdown,
   getFaqById,
   voteFaqHelpful,
   submitSupportTicket,
@@ -25,6 +26,14 @@ describe('faqService', () => {
     expect(faqs.length).toBe(6);
     expect(faqs[0].popularityScore).toBeGreaterThanOrEqual(faqs[1].popularityScore);
     expect(faqs[0].question).toContain('rate limiting');
+  });
+
+  it('exports filtered FAQs as clean formatted Markdown document', () => {
+    const md = exportFaqsAsMarkdown('', 'API & SDK Integration');
+    expect(md).toContain('# ⚡ NexusCloud Enterprise AI');
+    expect(md).toContain('Filter Category: **API & SDK Integration**');
+    expect(md).toContain('rate limiting');
+    expect(md).toContain('`#API`');
   });
 
   it('retrieves bookmarked FAQs by ID list', () => {

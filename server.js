@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import {
   getAllFaqs,
   getFaqsByIds,
+  exportFaqsAsMarkdown,
   getFaqById,
   voteFaqHelpful,
   submitSupportTicket,
@@ -26,6 +27,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
+
+// GET /api/faqs/export-markdown - Export FAQ Reference Cheat Sheet as Markdown File
+app.get('/api/faqs/export-markdown', (req, res) => {
+  const searchQuery = req.query.q || '';
+  const categoryFilter = req.query.category || 'All';
+  let bookmarkedIds = [];
+  if (req.query.bookmarkedIds) {
+    bookmarkedIds = req.query.bookmarkedIds.split(',').filter(Boolean);
+  }
+
+  const markdownContent = exportFaqsAsMarkdown(searchQuery, categoryFilter, bookmarkedIds);
+  res.setHeader('Content-Type', 'text/markdown');
+  res.setHeader('Content-Disposition', 'attachment; filename="nexus_faq_cheatsheet.md"');
+  res.status(200).send(markdownContent);
+});
 
 // GET /api/categories - Categories and counts
 app.get('/api/categories', (req, res) => {
