@@ -5,6 +5,14 @@ All notable changes to **Build 47 (NexusCloud Alpine.js Interactive Knowledge Ba
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-07-27
+
+### Added
+- Integrated **Support Ticket History Audit & Status Tracker** in `faqService.js` and `public/index.html`.
+- Added enterprise tickets storage (`ticketsStore`), SLA status calculation, and Express API route `GET /api/tickets`.
+- Updated `public/index.html` and `public/style.css` with **🎟️ Support Tickets** navbar chip, slide-out drawer panel (`showTicketDrawer`), live SLA response badges, priority indicators, and slide animations.
+- Added unit tests in `faqService.spec.js` (17 total unit tests passing).
+
 ## [0.5.0] - 2026-07-27
 
 ### Added

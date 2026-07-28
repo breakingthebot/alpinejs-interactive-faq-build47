@@ -38,6 +38,16 @@
       </div>
 
       <div class="nav-actions">
+        <!-- Quick Tickets Drawer Button -->
+        <button 
+          type="button" 
+          class="btn-tickets-chip" 
+          @click="showTicketDrawer = true; fetchTickets()"
+          title="View Dispatched Enterprise Support Tickets & SLA Status"
+        >
+          🎟️ Support Tickets (<span x-text="tickets.length"></span>)
+        </button>
+
         <!-- Quick Bookmarked Access Chip -->
         <button 
           type="button" 
@@ -364,6 +374,55 @@
       </div>
     </div>
 
+    <!-- Support Tickets Slide-Out Drawer (Alpine x-show & transitions) -->
+    <div 
+      class="drawer-backdrop" 
+      x-show="showTicketDrawer" 
+      x-transition:enter="transition-fade-enter"
+      x-transition:leave="transition-fade-leave"
+      @keydown.escape.window="showTicketDrawer = false"
+    >
+      <div 
+        class="drawer-panel card-glass" 
+        @click.outside="showTicketDrawer = false"
+        x-transition:enter="transition-drawer-enter"
+        x-transition:leave="transition-drawer-leave"
+      >
+        <div class="drawer-header">
+          <div>
+            <h2>🎟️ Support Ticket Audit History</h2>
+            <p class="drawer-subtitle">Track live SLA response timers & engineering team dispatch updates.</p>
+          </div>
+          <button type="button" class="drawer-close" @click="showTicketDrawer = false">&times;</button>
+        </div>
+
+        <div class="drawer-body">
+          <template x-if="tickets.length === 0">
+            <div class="empty-tickets">
+              <span class="empty-icon">🎟️</span>
+              <p>No active support tickets dispatched yet.</p>
+            </div>
+          </template>
+
+          <template x-for="tkt in tickets" :key="tkt.id">
+            <div class="ticket-card">
+              <div class="ticket-card-header">
+                <span class="ticket-id" x-text="tkt.id"></span>
+                <span class="sla-badge" :class="{ 'sla-active': tkt.slaStatus.includes('Active'), 'sla-met': tkt.slaStatus.includes('Met') }" x-text="tkt.slaStatus"></span>
+              </div>
+              <h4 class="ticket-subject" x-text="tkt.subject"></h4>
+              <p class="ticket-msg" x-text="tkt.message"></p>
+              <div class="ticket-meta">
+                <span class="priority-chip" :class="'priority-' + tkt.priority.toLowerCase()" x-text="tkt.priority + ' SLA'"></span>
+                <span class="ticket-cat" x-text="tkt.category"></span>
+                <span class="ticket-time" x-text="tkt.createdAt"></span>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="app-footer">
       <p>NexusCloud Enterprise AI Platform &bull; Alpine.js Interactive Knowledge Base &bull; Build 47</p>
@@ -384,6 +443,8 @@
         userVotes: {}, // Track voted items { faq_1: 'up' }
         suggestions: [],
         showSuggestions: false,
+        tickets: [],
+        showTicketDrawer: false,
         copiedFaqId: null,
         loading: false,
         showModal: false,
@@ -401,6 +462,7 @@
         initData() {
           this.fetchCategories();
           this.fetchFaqs();
+          this.fetchTickets();
 
           // Watch search query changes for auto-suggestions & filtering
           this.$watch('searchQuery', (val) => {
@@ -412,6 +474,15 @@
               this.showSuggestions = false;
             }
           });
+        },
+
+        fetchTickets() {
+          fetch('/api/tickets')
+            .then(res => res.json())
+            .then(data => {
+              this.tickets = data.tickets || [];
+            })
+            .catch(err => console.error('Failed to load tickets', err));
         },
 
         fetchSuggestions() {

@@ -30,6 +30,13 @@ describe('faqService', () => {
     expect(faqs[0].question).toContain('rate limiting');
   });
 
+  it('retrieves seeded support tickets with SLA statuses', () => {
+    const tickets = getAllTickets();
+    expect(tickets.length).toBe(2);
+    expect(tickets[0].id).toContain('tkt_');
+    expect(tickets[0].slaStatus).toContain('SLA Active');
+  });
+
   it('generates real-time auto-suggest search completions', () => {
     const suggestions = getSearchSuggestions('rate');
     expect(suggestions.length).toBeGreaterThanOrEqual(1);
@@ -104,6 +111,7 @@ describe('faqService', () => {
   });
 
   it('submits enterprise support ticket successfully', () => {
+    const initialCount = getAllTickets().length;
     const ticket = submitSupportTicket({
       name: 'Jordan Miller',
       email: 'jordan@enterprise.com',
@@ -115,7 +123,7 @@ describe('faqService', () => {
 
     expect(ticket.id).toBeDefined();
     expect(ticket.priority).toBe('High');
-    expect(getAllTickets().length).toBe(1);
+    expect(getAllTickets().length).toBe(initialCount + 1);
     expect(getAllTickets()[0].email).toBe('jordan@enterprise.com');
   });
 

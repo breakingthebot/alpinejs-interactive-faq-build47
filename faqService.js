@@ -33,6 +33,8 @@
  * @property {string} category
  * @property {string} message
  * @property {string} createdAt
+ * @property {string} slaStatus
+ * @property {string} status
  */
 
 /** @type {FaqItem[]} */
@@ -125,9 +127,36 @@ const INITIAL_FAQS = [
   }
 ];
 
-let faqsStore = [...INITIAL_FAQS];
 /** @type {SupportTicket[]} */
-let ticketsStore = [];
+const INITIAL_TICKETS = [
+  {
+    id: 'tkt_178201_a9b1',
+    name: 'Jordan Miller',
+    email: 'jordan@enterprise.com',
+    subject: 'Custom KMS Key ARN Integration Warning',
+    priority: 'High',
+    category: 'Security & Data Privacy',
+    message: 'Need verification on Nitro Enclave memory limits during fine-tuning job.',
+    createdAt: '2026-07-27 18:40',
+    status: 'In Progress',
+    slaStatus: '🟢 SLA Active (12m remaining)'
+  },
+  {
+    id: 'tkt_178105_c3d8',
+    name: 'Elena Rostova',
+    email: 'elena@nexus.dev',
+    subject: 'Kubernetes Helm Chart License Activation',
+    priority: 'Medium',
+    category: 'Model Deployment',
+    message: 'Air-gapped deployment image registry credentials request.',
+    createdAt: '2026-07-26 14:15',
+    status: 'Resolved',
+    slaStatus: '✅ SLA Met (Responded in 8m)'
+  }
+];
+
+let faqsStore = [...INITIAL_FAQS];
+let ticketsStore = [...INITIAL_TICKETS];
 
 export function getCategories() {
   return [
@@ -285,7 +314,9 @@ export function submitSupportTicket(data) {
     priority: data.priority || 'Medium',
     category: data.category || 'General Inquiry',
     message: data.message.trim(),
-    createdAt: new Date().toISOString().replace('T', ' ').substring(0, 16)
+    createdAt: new Date().toISOString().replace('T', ' ').substring(0, 16),
+    status: 'In Progress',
+    slaStatus: '🟢 SLA Active (15m SLA)'
   };
 
   ticketsStore.unshift(newTicket);
@@ -313,5 +344,5 @@ export function getCategoryStats(bookmarkedIds = []) {
 
 export function resetFaqsStore() {
   faqsStore = JSON.parse(JSON.stringify(INITIAL_FAQS));
-  ticketsStore = [];
+  ticketsStore = JSON.parse(JSON.stringify(INITIAL_TICKETS));
 }

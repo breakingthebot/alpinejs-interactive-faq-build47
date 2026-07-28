@@ -13,6 +13,7 @@ import {
   getFaqById,
   voteFaqHelpful,
   submitSupportTicket,
+  getAllTickets,
   getCategories,
   getCategoryStats
 } from './faqService.js';
@@ -28,6 +29,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
+
+// GET /api/tickets - Get List of Submitted Support Tickets & SLA Statuses
+app.get('/api/tickets', (req, res) => {
+  const tickets = getAllTickets();
+  res.json({ total: tickets.length, tickets });
+});
 
 // GET /api/faqs/suggest - Real-Time Search Auto-Suggestions
 app.get('/api/faqs/suggest', (req, res) => {
