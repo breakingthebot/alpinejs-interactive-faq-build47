@@ -489,6 +489,72 @@ body {
   color: #6366f1;
 }
 
+/* Saved Bookmarks Chip */
+.btn-saved-chip {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  border: 1px solid var(--card-border);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-saved-chip.has-saved {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fde68a;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.btn-saved-chip:hover {
+  transform: scale(1.03);
+}
+
+.tab-bookmarked.active {
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: #fde68a !important;
+  border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+/* Accordion Header Wrapper */
+.faq-header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 16px;
+}
+
+.faq-header-wrapper .faq-header {
+  flex: 1;
+}
+
+.btn-bookmark {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  border: 1px solid var(--card-border);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-bookmark:hover {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fde68a;
+}
+
+.btn-bookmark.bookmarked {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fde68a;
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
 /* Accordion Body */
 .faq-body {
   border-top: 1px solid var(--card-border);

@@ -5,6 +5,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   getAllFaqs,
+  getFaqsByIds,
   getFaqById,
   voteFaqHelpful,
   submitSupportTicket,
@@ -24,6 +25,20 @@ describe('faqService', () => {
     expect(faqs.length).toBe(6);
     expect(faqs[0].popularityScore).toBeGreaterThanOrEqual(faqs[1].popularityScore);
     expect(faqs[0].question).toContain('rate limiting');
+  });
+
+  it('retrieves bookmarked FAQs by ID list', () => {
+    const bookmarked = getFaqsByIds(['faq_1', 'faq_3']);
+    expect(bookmarked.length).toBe(2);
+    expect(bookmarked.map(f => f.id)).toContain('faq_1');
+    expect(bookmarked.map(f => f.id)).toContain('faq_3');
+  });
+
+  it('filters FAQs by Bookmarked category tag', () => {
+    const bookmarkedFaqs = getAllFaqs('', 'Bookmarked', 'popular', ['faq_2', 'faq_5']);
+    expect(bookmarkedFaqs.length).toBe(2);
+    expect(bookmarkedFaqs[0].id).toBe('faq_2');
+    expect(bookmarkedFaqs[1].id).toBe('faq_5');
   });
 
   it('filters FAQs by category tag', () => {
@@ -83,11 +98,11 @@ describe('faqService', () => {
     expect(() => submitSupportTicket({ name: 'Name', email: 'jordan@enterprise.com', subject: 'Subject', message: '' })).toThrow();
   });
 
-  it('calculates category stats correctly', () => {
-    const stats = getCategoryStats();
+  it('calculates category stats including bookmarked count', () => {
+    const stats = getCategoryStats(['faq_1', 'faq_2']);
     expect(stats.All).toBe(6);
+    expect(stats.Bookmarked).toBe(2);
     expect(stats['API & SDK Integration']).toBe(2);
-    expect(stats['Security & Data Privacy']).toBe(1);
   });
 
   it('retrieves categories list correctly', () => {

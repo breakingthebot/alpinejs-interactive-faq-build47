@@ -112,10 +112,12 @@ export function getCategories() {
   ];
 }
 
-export function getAllFaqs(searchQuery = '', categoryFilter = 'All', sortBy = 'popular') {
+export function getAllFaqs(searchQuery = '', categoryFilter = 'All', sortBy = 'popular', bookmarkedIds = []) {
   let result = [...faqsStore];
 
-  if (categoryFilter && categoryFilter !== 'All') {
+  if (categoryFilter === 'Bookmarked') {
+    result = result.filter(f => bookmarkedIds.includes(f.id));
+  } else if (categoryFilter && categoryFilter !== 'All') {
     result = result.filter(f => f.category === categoryFilter);
   }
 
@@ -140,6 +142,11 @@ export function getAllFaqs(searchQuery = '', categoryFilter = 'All', sortBy = 'p
   }
 
   return result;
+}
+
+export function getFaqsByIds(ids = []) {
+  if (!Array.isArray(ids) || ids.length === 0) return [];
+  return faqsStore.filter(f => ids.includes(f.id));
 }
 
 export function getFaqById(id) {
@@ -199,8 +206,8 @@ export function getAllTickets() {
   return [...ticketsStore];
 }
 
-export function getCategoryStats() {
-  const counts = { All: faqsStore.length };
+export function getCategoryStats(bookmarkedIds = []) {
+  const counts = { All: faqsStore.length, Bookmarked: bookmarkedIds.length };
   getCategories().slice(1).forEach(cat => {
     counts[cat] = 0;
   });

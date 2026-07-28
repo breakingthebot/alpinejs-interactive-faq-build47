@@ -38,6 +38,17 @@
       </div>
 
       <div class="nav-actions">
+        <!-- Quick Bookmarked Access Chip -->
+        <button 
+          type="button" 
+          class="btn-saved-chip" 
+          :class="{ 'has-saved': bookmarkedIds.length > 0 }"
+          @click="setCategory('Bookmarked')"
+          title="View Saved Favorite Articles"
+        >
+          📌 Saved Articles (<span x-text="bookmarkedIds.length"></span>)
+        </button>
+
         <!-- Alpine Dropdown: Quick Actions -->
         <div class="dropdown-wrapper" x-data="{ open: false }" @click.outside="open = false">
           <button type="button" class="btn-dropdown" @click="open = !open">
@@ -45,6 +56,7 @@
           </button>
           <div class="dropdown-menu" x-show="open" x-transition>
             <a href="#faqs" class="dropdown-item" @click="open = false">📚 Developer Knowledge Base</a>
+            <a href="#saved" class="dropdown-item" @click="open = false; setCategory('Bookmarked')">📌 Saved Offline Articles (<span x-text="bookmarkedIds.length"></span>)</a>
             <a href="#api" class="dropdown-item" @click="open = false">🔑 API Key Vault</a>
             <a href="#status" class="dropdown-item" @click="open = false">🟢 Live Systems Status (99.99%)</a>
             <div class="dropdown-divider"></div>
@@ -96,11 +108,11 @@
             <button 
               type="button" 
               class="tab-btn" 
-              :class="{ 'active': activeCategory === cat }"
+              :class="{ 'active': activeCategory === cat, 'tab-bookmarked': cat === 'Bookmarked' }"
               @click="setCategory(cat)"
             >
-              <span x-text="cat"></span>
-              <span class="tab-count" x-text="categoryStats[cat] || 0"></span>
+              <span x-text="cat === 'Bookmarked' ? '📌 Saved' : cat"></span>
+              <span class="tab-count" x-text="cat === 'Bookmarked' ? bookmarkedIds.length : (categoryStats[cat] || 0)"></span>
             </button>
           </template>
         </div>
@@ -129,34 +141,47 @@
 
         <!-- Empty State -->
         <div class="empty-state card-glass" x-show="!loading && faqs.length === 0">
-          <div class="empty-icon">🔍</div>
-          <h3>No matching FAQ articles found</h3>
-          <p>We couldn't find any questions matching your query "<span x-text="searchQuery"></span>" in category "<span x-text="activeCategory"></span>".</p>
-          <button type="button" class="btn-secondary" @click="searchQuery = ''; activeCategory = 'All'; fetchFaqs()">Clear Filters</button>
+          <div class="empty-icon">📌</div>
+          <h3><span x-text="activeCategory === 'Bookmarked' ? 'No saved articles bookmarked yet' : 'No matching FAQ articles found'"></span></h3>
+          <p x-text="activeCategory === 'Bookmarked' ? 'Click the 📌 Bookmark button on any article to save it for quick offline reference.' : 'We couldn\'t find any questions matching your query in this category.'"></p>
+          <button type="button" class="btn-secondary" @click="searchQuery = ''; activeCategory = 'All'; fetchFaqs()">View All FAQ Articles</button>
         </div>
 
         <!-- Alpine Accordion Repeat Items -->
         <template x-for="faq in faqs" :key="faq.id">
           <div class="faq-card card-glass" :class="{ 'expanded': openFaqId === faq.id }">
             <!-- Accordion Header Button -->
-            <button 
-              type="button" 
-              class="faq-header" 
-              @click="toggleFaq(faq.id)"
-            >
-              <div class="faq-header-left">
-                <span class="cat-chip" :class="'cat-chip-' + getCategorySlug(faq.category)" x-text="faq.category"></span>
-                <h3 class="faq-question" x-text="faq.question"></h3>
-              </div>
-              <div class="faq-header-right">
-                <span class="popularity-badge" title="Popularity Rating">
-                  🔥 <span x-text="faq.popularityScore"></span>
-                </span>
-                <span class="accordion-icon" :class="{ 'rotate': openFaqId === faq.id }">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-                </span>
-              </div>
-            </button>
+            <div class="faq-header-wrapper">
+              <button 
+                type="button" 
+                class="faq-header" 
+                @click="toggleFaq(faq.id)"
+              >
+                <div class="faq-header-left">
+                  <span class="cat-chip" :class="'cat-chip-' + getCategorySlug(faq.category)" x-text="faq.category"></span>
+                  <h3 class="faq-question" x-text="faq.question"></h3>
+                </div>
+                <div class="faq-header-right">
+                  <span class="popularity-badge" title="Popularity Rating">
+                    🔥 <span x-text="faq.popularityScore"></span>
+                  </span>
+                  <span class="accordion-icon" :class="{ 'rotate': openFaqId === faq.id }">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                  </span>
+                </div>
+              </button>
+
+              <!-- Bookmark Toggle Action Button -->
+              <button 
+                type="button" 
+                class="btn-bookmark" 
+                :class="{ 'bookmarked': bookmarkedIds.includes(faq.id) }"
+                @click.stop="toggleBookmark(faq.id)"
+                :title="bookmarkedIds.includes(faq.id) ? 'Remove Bookmark' : 'Save Article to Bookmarks'"
+              >
+                <span x-text="bookmarkedIds.includes(faq.id) ? '📌 Saved' : '📌 Bookmark'"></span>
+              </button>
+            </div>
 
             <!-- Accordion Content Body with Alpine x-collapse -->
             <div class="faq-body" x-show="openFaqId === faq.id" x-collapse>
@@ -295,10 +320,11 @@
         searchQuery: '',
         activeCategory: 'All',
         sortBy: 'popular',
-        categories: ['All', 'API & SDK Integration', 'Security & Data Privacy', 'Enterprise SLA', 'Billing & Invoicing', 'Model Deployment'],
+        categories: ['All', 'Bookmarked', 'API & SDK Integration', 'Security & Data Privacy', 'Enterprise SLA', 'Billing & Invoicing', 'Model Deployment'],
         categoryStats: {},
         faqs: [],
         openFaqId: 'faq_1', // Open first accordion by default
+        bookmarkedIds: JSON.parse(localStorage.getItem('nexus_faq_bookmarks') || '[]'),
         userVotes: {}, // Track voted items { faq_1: 'up' }
         loading: false,
         showModal: false,
@@ -324,7 +350,7 @@
         },
 
         fetchCategories() {
-          fetch('/api/categories')
+          fetch('/api/categories?bookmarked=' + this.bookmarkedIds.join(','))
             .then(res => res.json())
             .then(data => {
               this.categories = data.categories || this.categories;
@@ -338,7 +364,8 @@
           const params = new URLSearchParams({
             q: this.searchQuery,
             category: this.activeCategory,
-            sort: this.sortBy
+            sort: this.sortBy,
+            bookmarkedIds: this.bookmarkedIds.join(',')
           });
 
           fetch('/api/faqs?' + params.toString())
@@ -360,6 +387,23 @@
 
         toggleFaq(id) {
           this.openFaqId = this.openFaqId === id ? null : id;
+        },
+
+        toggleBookmark(id) {
+          const idx = this.bookmarkedIds.indexOf(id);
+          if (idx !== -1) {
+            this.bookmarkedIds.splice(idx, 1);
+            this.showToast('Removed article from saved bookmarks.', 'success');
+          } else {
+            this.bookmarkedIds.push(id);
+            this.showToast('📌 Article saved to your personal bookmarks!', 'success');
+          }
+
+          localStorage.setItem('nexus_faq_bookmarks', JSON.stringify(this.bookmarkedIds));
+          this.fetchCategories();
+          if (this.activeCategory === 'Bookmarked') {
+            this.fetchFaqs();
+          }
         },
 
         vote(id, isHelpful) {

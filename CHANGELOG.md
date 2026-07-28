@@ -5,6 +5,14 @@ All notable changes to **Build 47 (NexusCloud Alpine.js Interactive Knowledge Ba
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-07-27
+
+### Added
+- Integrated **Interactive FAQ Bookmarking & Personal Saved Articles** in `faqService.js` and `server.js`.
+- Added batch bookmark retrieval method (`getFaqsByIds`), `POST /api/faqs/bookmarks` Express API endpoint, and `Bookmarked` category filtering logic.
+- Updated `public/index.html` and `public/style.css` with **📌 Saved Articles** header chip, **📌 Saved** category tab pill, bookmark action button on FAQ card headers, and `localStorage` persistence.
+- Added unit tests in `faqService.spec.js` (13 total unit tests passing).
+
 ## [0.1.0] - 2026-07-27
 
 ### Added

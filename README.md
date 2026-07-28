@@ -2,8 +2,8 @@
 
 [![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Demo-000000?style=for-the-badge&logo=vercel)](https://alpinejs-interactive-faq-build47.vercel.app)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/breakingthebot/alpinejs-interactive-faq-build47)
-[![Tests](https://img.shields.io/badge/Vitest-11%20Passed-6E9F18?style=for-the-badge&logo=vitest)](file:///C:/Users/marve/Desktop/AI-286-Builds/Build_47/faqService.spec.js)
-[![Version](https://img.shields.io/badge/Release-v0.1.0-blue?style=for-the-badge)](file:///C:/Users/marve/Desktop/AI-286-Builds/Build_47/CHANGELOG.md)
+[![Tests](https://img.shields.io/badge/Vitest-13%20Passed-6E9F18?style=for-the-badge&logo=vitest)](file:///C:/Users/marve/Desktop/AI-286-Builds/Build_47/faqService.spec.js)
+[![Version](https://img.shields.io/badge/Release-v0.2.0-blue?style=for-the-badge)](file:///C:/Users/marve/Desktop/AI-286-Builds/Build_47/CHANGELOG.md)
 
 ---
 
@@ -20,6 +20,7 @@
 ## 🔥 Key Features
 
 - **🚀 Minimal JS Framework Overhead**: Powered by **Alpine.js 3.x** declarative directives (`x-data`, `x-show`, `x-collapse`, `x-model`, `x-transition`).
+- **📌 Personal Saved Articles & Offline Bookmarking**: Pin and save favorite FAQ articles to local storage (`localStorage`) with quick-access navbar count chips and category filter tab.
 - **📂 Expandable FAQ Accordion**: Smooth collapse animations (`x-collapse`), tag badges, and last updated verifications.
 - **🏷️ Category Tabs & Stats**: Filter articles dynamically by category (*API & SDK Integration*, *Security & Data Privacy*, *Enterprise SLA*, *Billing & Invoicing*, *Model Deployment*).
 - **🔍 Real-Time Client Search & Sorting**: Live debounced search filtering by query keywords and tags, plus custom sorting dropdown (*Most Popular*, *Most Recent*, *Highest Rated*, *Alphabetical*).

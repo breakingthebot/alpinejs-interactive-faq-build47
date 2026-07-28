@@ -7,6 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import {
   getAllFaqs,
+  getFaqsByIds,
   getFaqById,
   voteFaqHelpful,
   submitSupportTicket,
@@ -28,9 +29,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // GET /api/categories - Categories and counts
 app.get('/api/categories', (req, res) => {
+  let bookmarkedIds = [];
+  if (req.query.bookmarked) {
+    bookmarkedIds = req.query.bookmarked.split(',').filter(Boolean);
+  }
+
   res.json({
-    categories: getCategories(),
-    stats: getCategoryStats()
+    categories: ['All', 'Bookmarked', ...getCategories().slice(1)],
+    stats: getCategoryStats(bookmarkedIds)
   });
 });
 
@@ -39,8 +45,23 @@ app.get('/api/faqs', (req, res) => {
   const searchQuery = req.query.q || '';
   const categoryFilter = req.query.category || 'All';
   const sortBy = req.query.sort || 'popular';
+  
+  let bookmarkedIds = [];
+  if (req.query.bookmarkedIds) {
+    bookmarkedIds = req.query.bookmarkedIds.split(',').filter(Boolean);
+  }
 
-  const faqs = getAllFaqs(searchQuery, categoryFilter, sortBy);
+  const faqs = getAllFaqs(searchQuery, categoryFilter, sortBy, bookmarkedIds);
+  res.json({
+    total: faqs.length,
+    faqs
+  });
+});
+
+// POST /api/faqs/bookmarks - Batch retrieve bookmarked FAQs
+app.post('/api/faqs/bookmarks', (req, res) => {
+  const ids = req.body.ids || [];
+  const faqs = getFaqsByIds(ids);
   res.json({
     total: faqs.length,
     faqs
