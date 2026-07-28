@@ -3,6 +3,13 @@
 // Created: 2026-07-27
 
 /**
+ * @typedef {Object} CodeSnippets
+ * @property {string} curl
+ * @property {string} python
+ * @property {string} node
+ */
+
+/**
  * @typedef {Object} FaqItem
  * @property {string} id
  * @property {string} question
@@ -13,6 +20,7 @@
  * @property {number} downvotes
  * @property {string[]} tags
  * @property {string} lastUpdated
+ * @property {CodeSnippets} [codeSnippets]
  */
 
 /**
@@ -38,7 +46,12 @@ const INITIAL_FAQS = [
     upvotes: 142,
     downvotes: 3,
     tags: ['API', 'Rate Limit', 'Tokens', 'Quota'],
-    lastUpdated: '2026-07-15'
+    lastUpdated: '2026-07-15',
+    codeSnippets: {
+      curl: `curl -X POST https://api.nexuscloud.ai/v1/chat/completions \\\n  -H "Authorization: Bearer $NEXUS_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"model": "nexus-llama3-70b", "messages": [{"role": "user", "content": "Explain RPM quotas"}]}'`,
+      python: `import nexuscloud\n\nclient = nexuscloud.Nexus(api_key="nxs_live_992138")\nresponse = client.chat.completions.create(\n    model="nexus-llama3-70b",\n    messages=[{"role": "user", "content": "Explain RPM quotas"}]\n)\nprint(response.choices[0].message.content)`,
+      node: `import { NexusCloud } from '@nexuscloud/sdk';\n\nconst nexus = new NexusCloud({ apiKey: process.env.NEXUS_API_KEY });\nconst response = await nexus.chat.completions.create({\n  model: 'nexus-llama3-70b',\n  messages: [{ role: 'user', content: 'Explain RPM quotas' }]\n});\nconsole.log(response.choices[0].message.content);`
+    }
   },
   {
     id: 'faq_2',
@@ -49,7 +62,12 @@ const INITIAL_FAQS = [
     upvotes: 128,
     downvotes: 1,
     tags: ['Security', 'Encryption', 'SOC2', 'KMS'],
-    lastUpdated: '2026-07-18'
+    lastUpdated: '2026-07-18',
+    codeSnippets: {
+      curl: `curl -X GET https://api.nexuscloud.ai/v1/security/encryption-status \\\n  -H "Authorization: Bearer $NEXUS_API_KEY"`,
+      python: `import nexuscloud\n\nclient = nexuscloud.Nexus(api_key="nxs_live_992138")\nstatus = client.security.get_encryption_status()\nprint(f"KMS Key ARN: {status.kms_arn}, Encryption: {status.cipher}")`,
+      node: `import { NexusCloud } from '@nexuscloud/sdk';\n\nconst nexus = new NexusCloud();\nconst status = await nexus.security.getEncryptionStatus();\nconsole.log('KMS Status:', status);`
+    }
   },
   {
     id: 'faq_3',
@@ -82,7 +100,12 @@ const INITIAL_FAQS = [
     upvotes: 94,
     downvotes: 5,
     tags: ['Kubernetes', 'On-Premises', 'Air-Gapped', 'Helm'],
-    lastUpdated: '2026-07-25'
+    lastUpdated: '2026-07-25',
+    codeSnippets: {
+      curl: `helm repo add nexuscloud https://charts.nexuscloud.ai\nhelm install nexus-operator nexuscloud/nexus-operator \\\n  --set licenseKey=$NEXUS_LICENSE_KEY \\\n  --set airgapped=true`,
+      python: `from nexuscloud.deploy import KubernetesOperator\n\nop = KubernetesOperator(license_key="nxs_lic_771923")\nop.deploy_helm_chart(release_name="nexus-local", airgapped=True)`,
+      node: `import { KubernetesOperator } from '@nexuscloud/deploy';\n\nconst operator = new KubernetesOperator({ licenseKey: process.env.NEXUS_LICENSE_KEY });\nawait operator.deployHelmChart({ releaseName: 'nexus-local', airgapped: true });`
+    }
   },
   {
     id: 'faq_6',
@@ -93,7 +116,12 @@ const INITIAL_FAQS = [
     upvotes: 76,
     downvotes: 2,
     tags: ['API Keys', 'Permissions', 'RBAC', 'Security'],
-    lastUpdated: '2026-07-12'
+    lastUpdated: '2026-07-12',
+    codeSnippets: {
+      curl: `curl -X POST https://api.nexuscloud.ai/v1/keys \\\n  -H "Authorization: Bearer $ADMIN_KEY" \\\n  -d '{"name": "Prod Ingestion Key", "scopes": ["inference:read"], "regions": ["us-east-1", "eu-west-1"]}'`,
+      python: `import nexuscloud\n\nclient = nexuscloud.Nexus(api_key=ADMIN_KEY)\nnew_key = client.keys.create(name="Prod Ingestion", scopes=["inference:read"], regions=["us-east-1"])\nprint(new_key.secret)`,
+      node: `import { NexusCloud } from '@nexuscloud/sdk';\n\nconst client = new NexusCloud({ apiKey: ADMIN_KEY });\nconst key = await client.keys.create({\n  name: 'Prod Ingestion Key',\n  scopes: ['inference:read'],\n  regions: ['us-east-1']\n});`
+    }
   }
 ];
 
@@ -110,6 +138,12 @@ export function getCategories() {
     'Billing & Invoicing',
     'Model Deployment'
   ];
+}
+
+export function getCodeSnippet(faqId, lang = 'curl') {
+  const faq = getFaqById(faqId);
+  if (!faq || !faq.codeSnippets) return null;
+  return faq.codeSnippets[lang] || faq.codeSnippets.curl;
 }
 
 export function getAllFaqs(searchQuery = '', categoryFilter = 'All', sortBy = 'popular', bookmarkedIds = []) {
@@ -158,6 +192,11 @@ export function exportFaqsAsMarkdown(searchQuery = '', categoryFilter = 'All', b
     md += `- **Last Verified**: ${f.lastUpdated}\n`;
     md += `- **Tags**: ${f.tags.map(t => `\`#${t}\``).join(', ')}\n\n`;
     md += `${f.answer}\n\n`;
+
+    if (f.codeSnippets) {
+      md += `\`\`\`bash\n# cURL SDK Example\n${f.codeSnippets.curl}\n\`\`\`\n\n`;
+    }
+
     md += `---\n\n`;
   });
 

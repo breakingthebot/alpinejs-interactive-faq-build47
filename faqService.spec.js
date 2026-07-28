@@ -6,6 +6,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import {
   getAllFaqs,
   getFaqsByIds,
+  getCodeSnippet,
   exportFaqsAsMarkdown,
   getFaqById,
   voteFaqHelpful,
@@ -28,12 +29,23 @@ describe('faqService', () => {
     expect(faqs[0].question).toContain('rate limiting');
   });
 
+  it('retrieves SDK code snippets by language for specific FAQ item', () => {
+    const curlSnippet = getCodeSnippet('faq_1', 'curl');
+    const pythonSnippet = getCodeSnippet('faq_1', 'python');
+    const nodeSnippet = getCodeSnippet('faq_1', 'node');
+
+    expect(curlSnippet).toContain('curl -X POST');
+    expect(pythonSnippet).toContain('import nexuscloud');
+    expect(nodeSnippet).toContain('import { NexusCloud }');
+  });
+
   it('exports filtered FAQs as clean formatted Markdown document', () => {
     const md = exportFaqsAsMarkdown('', 'API & SDK Integration');
     expect(md).toContain('# ⚡ NexusCloud Enterprise AI');
     expect(md).toContain('Filter Category: **API & SDK Integration**');
     expect(md).toContain('rate limiting');
     expect(md).toContain('`#API`');
+    expect(md).toContain('curl -X POST');
   });
 
   it('retrieves bookmarked FAQs by ID list', () => {

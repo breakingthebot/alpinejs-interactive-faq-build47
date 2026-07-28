@@ -585,6 +585,82 @@ body {
   box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
 }
 
+/* Interactive Code Snippet Vault */
+.code-snippet-vault {
+  background: rgba(8, 12, 22, 0.8);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 16px 0 20px;
+}
+
+.sdk-tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.9);
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.sdk-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.sdk-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sdk-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sdk-btn.active {
+  background: rgba(99, 102, 241, 0.2);
+  color: #818cf8;
+}
+
+.btn-copy-code {
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+  border: 1px solid var(--card-border);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-copy-code:hover {
+  background: rgba(99, 102, 241, 0.2);
+  color: #ffffff;
+}
+
+.code-block-wrapper {
+  padding: 16px;
+  overflow-x: auto;
+}
+
+.code-text {
+  font-family: 'Fira Code', 'Cascadia Code', Consolas, Monaco, monospace;
+  font-size: 13px;
+  color: #38bdf8;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
 /* Accordion Body */
 .faq-body {
   border-top: 1px solid var(--card-border);

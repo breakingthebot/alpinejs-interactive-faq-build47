@@ -197,8 +197,31 @@
 
             <!-- Accordion Content Body with Alpine x-collapse -->
             <div class="faq-body" x-show="openFaqId === faq.id" x-collapse>
-              <div class="faq-content">
+              <div class="faq-content" x-data="{ activeSdk: 'curl' }">
                 <p class="faq-answer" x-text="faq.answer"></p>
+
+                <!-- Interactive Code Snippet Vault -->
+                <template x-if="faq.codeSnippets">
+                  <div class="code-snippet-vault">
+                    <div class="sdk-tab-header">
+                      <div class="sdk-tabs">
+                        <button type="button" class="sdk-btn" :class="{ 'active': activeSdk === 'curl' }" @click="activeSdk = 'curl'">cURL</button>
+                        <button type="button" class="sdk-btn" :class="{ 'active': activeSdk === 'python' }" @click="activeSdk = 'python'">Python SDK</button>
+                        <button type="button" class="sdk-btn" :class="{ 'active': activeSdk === 'node' }" @click="activeSdk = 'node'">Node.js SDK</button>
+                      </div>
+                      <button 
+                        type="button" 
+                        class="btn-copy-code" 
+                        @click="copySnippet(faq.codeSnippets[activeSdk], faq.id)"
+                      >
+                        <span x-text="copiedFaqId === faq.id ? '✅ Copied!' : '📋 Copy Code'"></span>
+                      </button>
+                    </div>
+                    <div class="code-block-wrapper">
+                      <pre><code class="code-text" x-text="faq.codeSnippets[activeSdk]"></code></pre>
+                    </div>
+                  </div>
+                </template>
 
                 <!-- Tags List -->
                 <div class="tags-row">
@@ -338,6 +361,7 @@
         openFaqId: 'faq_1', // Open first accordion by default
         bookmarkedIds: JSON.parse(localStorage.getItem('nexus_faq_bookmarks') || '[]'),
         userVotes: {}, // Track voted items { faq_1: 'up' }
+        copiedFaqId: null,
         loading: false,
         showModal: false,
         submittingTicket: false,
@@ -416,6 +440,21 @@
           if (this.activeCategory === 'Bookmarked') {
             this.fetchFaqs();
           }
+        },
+
+        copySnippet(codeText, faqId) {
+          if (!codeText) return;
+          navigator.clipboard.writeText(codeText)
+            .then(() => {
+              this.copiedFaqId = faqId;
+              this.showToast('📋 Code snippet copied to clipboard!', 'success');
+              setTimeout(() => {
+                this.copiedFaqId = null;
+              }, 2500);
+            })
+            .catch(err => {
+              this.showToast('Failed to copy code: ' + err.message, 'error');
+            });
         },
 
         vote(id, isHelpful) {
